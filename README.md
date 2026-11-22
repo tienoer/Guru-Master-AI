@@ -1,2 +1,3613 @@
-# Guru-Master-AI
-Satu Aplikasi, Sejuta Solusi
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GURU MASTER AI — Satu Aplikasi, Sejuta Solusi untuk Guru</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            navy: {
+              50: '#F0F4F8',
+              100: '#D9E2EC',
+              200: '#BCCCDC',
+              700: '#1D3B68',
+              800: '#132A4E',
+              900: '#0B1B36',
+              950: '#061022',
+            },
+            turquoise: {
+              50: '#F0FDFA',
+              100: '#CCFBF1',
+              300: '#5EEAD4',
+              400: '#2DD4BF',
+              500: '#14B8A6',
+              600: '#0D9488',
+              700: '#0F766E',
+            },
+            gold: {
+              100: '#FEF3C7',
+              300: '#FCD34D',
+              400: '#FBBF24',
+              500: '#F59E0B',
+              600: '#D97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar & Utility Styles */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.6); }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .animate-float { animation: floatSlow 4s ease-in-out infinite; }
+
+    /* Print / PDF A4 Clean Styling */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #print-area, #print-area * {
+        visibility: visible !important;
+      }
+      #print-area {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 14mm !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* Formatted Educational Output Styles */
+    .edu-doc h1, .edu-doc h2, .edu-doc h3 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .edu-doc h1 { font-size: 1.3rem; border-bottom: 2px solid #0B1B36; padding-bottom: 0.4rem; }
+    .edu-doc h2 { font-size: 1.1rem; color: #0F766E; }
+    .edu-doc h3 { font-size: 0.98rem; }
+    .edu-doc p { margin-bottom: 0.6rem; line-height: 1.65; }
+    .edu-doc ul, .edu-doc ol { margin-left: 1.4rem; margin-bottom: 0.75rem; list-style-position: outside; }
+    .edu-doc ul { list-style-type: disc; }
+    .edu-doc ol { list-style-type: decimal; }
+    .edu-doc li { margin-bottom: 0.3rem; line-height: 1.55; }
+    .edu-doc table { width: 100%; border-collapse: collapse; margin: 0.85rem 0; font-size: 0.88rem; }
+    .edu-doc th, .edu-doc td { border: 1px solid #CBD5E1; padding: 0.55rem 0.7rem; text-align: left; vertical-align: top; }
+    .edu-doc th { background-color: #F1F5F9; font-weight: 600; color: #0B1B36; }
+    .dark .edu-doc th { background-color: #1E293B; color: #F8FAFC; border-color: #475569; }
+    .dark .edu-doc td { border-color: #475569; }
+    .dark .edu-doc h1 { border-bottom-color: #2DD4BF; }
+    .dark .edu-doc h2 { color: #2DD4BF; }
+
+    /* Black & White Photocopy Mode for LKPD */
+    .lkpd-bw {
+      filter: grayscale(100%) contrast(115%);
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
+    .lkpd-bw * {
+      border-color: #000000 !important;
+      color: #000000 !important;
+      background-color: transparent !important;
+    }
+    .lkpd-bw th {
+      background-color: #E5E7EB !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased selection:bg-turquoise-500 selection:text-white overflow-x-hidden">
+
+  <!-- Global Hidden File Input for Developer Photo -->
+  <input type="file" id="global-dev-photo-input" accept="image/*" class="hidden" onchange="updateDeveloperPhotoFile(event)" />
+
+  <!-- Hidden Print Container for Clean A4 Export -->
+  <div id="print-area" class="hidden"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Global Modal Container -->
+  <div id="global-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-navy-950/70 backdrop-blur-sm p-3 sm:p-5 overflow-y-auto">
+    <div id="global-modal-card" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden transform transition-all">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-navy-900 text-white">
+        <h3 id="global-modal-title" class="font-display font-bold text-lg truncate pr-4">Judul Modal</h3>
+        <button type="button" onclick="closeModal()" class="p-2 rounded-xl hover:bg-white/10 text-slate-200 hover:text-white transition" aria-label="Tutup">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="global-modal-body" class="p-5 overflow-y-auto flex-1 space-y-4"></div>
+      <div id="global-modal-footer" class="px-5 py-3.5 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 flex flex-wrap items-center justify-end gap-2"></div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       VIEW 1: HALAMAN PEMBUKA (LANDING PAGE)
+  ====================================================================== -->
+  <section id="view-landing" class="min-h-screen flex flex-col justify-between bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 text-white relative overflow-hidden">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-turquoise-500/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-gold-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Top Navbar -->
+    <header class="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-turquoise-500 to-navy-700 p-0.5 shadow-lg shadow-turquoise-500/20">
+          <div class="w-full h-full bg-navy-950 rounded-[14px] flex items-center justify-center">
+            <svg class="w-7 h-7" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12C10.5 10.5 16 11.5 20 14.5C24 11.5 29.5 10.5 34 12V30C29.5 28.5 24 29.5 20 32.5C16 29.5 10.5 28.5 6 30V12Z" stroke="#2DD4BF" stroke-width="2.2" stroke-linejoin="round"/>
+              <path d="M20 14.5V32.5" stroke="#2DD4BF" stroke-width="2"/>
+              <circle cx="20" cy="7" r="2.2" fill="#FBBF24"/>
+              <circle cx="13" cy="8.5" r="1.6" fill="#2DD4BF"/>
+              <circle cx="27" cy="8.5" r="1.6" fill="#2DD4BF"/>
+              <path d="M14.5 8.5L18 7.3M25.5 8.5L22 7.3" stroke="#FBBF24" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <div>
+          <span class="font-display font-extrabold text-lg sm:text-xl tracking-tight text-white">GURU MASTER <span class="text-gold-400">AI</span></span>
+          <p class="text-[11px] text-turquoise-300 font-medium tracking-wide">Asisten Digital Pendidik Indonesia</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button type="button" onclick="openAboutModal()" class="text-sm font-medium text-slate-200 hover:text-gold-400 px-3 py-2 rounded-xl transition">
+          Tentang Aplikasi
+        </button>
+        <button type="button" onclick="quickDemoLogin()" class="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/15 px-4 py-2 rounded-xl transition">
+          <span>Masuk Cepat</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Hero Section -->
+    <main class="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 lg:py-12 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-turquoise-500/15 border border-turquoise-400/30 text-turquoise-300 text-xs sm:text-sm font-semibold">
+          <span class="w-2 h-2 rounded-full bg-gold-400 animate-pulse"></span>
+          <span>Mendukung PAUD/TK • SD/MI • SMP/MTs • SMA/MA • SMK • SLB</span>
+        </div>
+
+        <h1 class="font-display font-extrabold text-3xl sm:text-5xl lg:text-[3.35rem] leading-tight tracking-tight">
+          GURU MASTER <span class="text-transparent bg-clip-text bg-gradient-to-r from-turquoise-400 via-teal-200 to-gold-400">AI</span>
+        </h1>
+        
+        <p class="font-display font-bold text-xl sm:text-2xl text-gold-400">
+          “Satu Aplikasi, Sejuta Solusi untuk Guru.”
+        </p>
+
+        <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+          Asisten digital berbasis kecerdasan buatan yang dirancang khusus untuk membantu guru Indonesia menyusun perangkat pembelajaran, bank soal HOTS, LKPD, game edukasi interaktif, presentasi, deskripsi raport, hingga administrasi kelas secara cepat, terstruktur, dan sesuai karakter peserta didik.
+        </p>
+
+        <!-- Primary Action Buttons -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3.5 pt-2">
+          <button type="button" onclick="switchView('view-profile')" class="inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-turquoise-500 to-turquoise-600 hover:from-turquoise-400 hover:to-turquoise-500 text-navy-950 font-display font-extrabold text-base px-7 py-4 rounded-2xl shadow-xl shadow-turquoise-500/25 transition transform hover:-translate-y-0.5">
+            <span>MULAI SEKARANG</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </button>
+
+          <button type="button" onclick="quickDemoLogin()" class="inline-flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-400 text-navy-950 font-display font-bold text-base px-6 py-4 rounded-2xl shadow-lg shadow-gold-500/20 transition transform hover:-translate-y-0.5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+            <span>MASUK</span>
+          </button>
+
+          <button type="button" onclick="openAboutModal()" class="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-base px-6 py-4 rounded-2xl transition">
+            <svg class="w-5 h-5 text-turquoise-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>TENTANG APLIKASI</span>
+          </button>
+        </div>
+
+        <!-- Key Value Badges -->
+        <div class="grid grid-cols-3 gap-3 pt-4 max-w-lg mx-auto lg:mx-0">
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
+            <div class="font-display font-extrabold text-xl sm:text-2xl text-turquoise-400">12</div>
+            <div class="text-xs text-slate-300">Layanan Utama</div>
+          </div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
+            <div class="font-display font-extrabold text-xl sm:text-2xl text-gold-400">6</div>
+            <div class="text-xs text-slate-300">Jenjang Adaptif</div>
+          </div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
+            <div class="font-display font-extrabold text-xl sm:text-2xl text-white">10</div>
+            <div class="text-xs text-slate-300">Game Edukasi</div>
+          </div>
+        </div>
+
+        <!-- Developer Credit Card on Landing Page -->
+        <div onclick="openAboutModal()" class="cursor-pointer group max-w-lg mx-auto lg:mx-0 bg-white/10 hover:bg-white/15 backdrop-blur-md border border-gold-400/40 rounded-2xl p-3.5 flex items-center gap-4 text-left transition shadow-lg">
+          <div data-w="64" data-h="80" class="dev-photo-slot w-16 h-20 rounded-xl overflow-hidden border-2 border-gold-400 shadow-md shrink-0 bg-sky-700">
+            <img src="https://iili.io/oK0I2gj.jpg" referrerpolicy="no-referrer" alt="Foto Pengembang Eti, S.Pd.SD" onerror="handleDevImgError(this, 'landing', 64, 80)" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top;" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-turquoise-300">Pengembang &amp; Inisiator Aplikasi</div>
+            <div class="font-display font-extrabold text-base sm:text-lg text-white group-hover:text-gold-400 transition truncate">Eti, S.Pd.SD</div>
+            <div class="mt-1.5 flex flex-wrap items-center gap-2">
+              <button type="button" onclick="triggerDeveloperPhotoPicker(event)" class="inline-flex items-center gap-1 text-[11px] font-bold bg-gold-500 hover:bg-gold-400 text-navy-950 px-2.5 py-1 rounded-lg shadow transition">
+                <span>📷 Ganti Foto</span>
+              </button>
+              <span class="text-[11px] text-slate-300 group-hover:text-white transition">Profil Pengembang &rarr;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Modern Custom SVG Educational Illustration -->
+      <div class="lg:col-span-5 flex justify-center">
+        <div class="relative w-full max-w-md animate-float">
+          <div class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md border border-white/15 rounded-3xl p-6 shadow-2xl">
+            <svg viewBox="0 0 420 340" class="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="210" cy="170" r="130" fill="url(#heroGlow)" opacity="0.35"/>
+              <defs>
+                <radialGradient id="heroGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(210 170) scale(130)">
+                  <stop stop-color="#2DD4BF"/>
+                  <stop offset="1" stop-color="#0B1B36" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+
+              <rect x="65" y="45" width="290" height="190" rx="18" fill="#0F264A" stroke="#2DD4BF" stroke-width="2.5"/>
+              <rect x="80" y="62" width="260" height="156" rx="10" fill="#163563"/>
+
+              <path d="M135 125C162 116 190 122 210 138C230 122 258 116 285 125V192C258 183 230 189 210 205C190 189 162 183 135 192V125Z" fill="#FFFFFF" stroke="#FBBF24" stroke-width="2.5"/>
+              <line x1="210" y1="138" x2="210" y2="205" stroke="#CBD5E1" stroke-width="2"/>
+              <line x1="150" y1="145" x2="195" y2="152" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="150" y1="160" x2="195" y2="167" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="225" y1="152" x2="270" y2="145" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="225" y1="167" x2="270" y2="160" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+
+              <circle cx="210" cy="92" r="16" fill="#0D9488" stroke="#FBBF24" stroke-width="2.5"/>
+              <path d="M210 83L212.5 89.5L219 92L212.5 94.5L210 101L207.5 94.5L201 92L207.5 89.5L210 83Z" fill="#FBBF24"/>
+              <circle cx="168" cy="100" r="7" fill="#14B8A6"/>
+              <circle cx="252" cy="100" r="7" fill="#14B8A6"/>
+              <path d="M175 98L194 94M245 98L226 94" stroke="#FBBF24" stroke-width="2" stroke-dasharray="3 3"/>
+
+              <rect x="28" y="88" width="84" height="44" rx="10" fill="#FFFFFF"/>
+              <circle cx="46" cy="110" r="10" fill="#CCFBF1"/>
+              <path d="M42 110L45 113L51 107" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="62" y="102" width="40" height="6" rx="3" fill="#0B1B36"/>
+              <rect x="62" y="113" width="28" height="5" rx="2.5" fill="#94A3B8"/>
+
+              <rect x="308" y="150" width="88" height="48" rx="10" fill="#FBBF24"/>
+              <text x="322" y="172" fill="#0B1B36" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="11">MODUL AJAR</text>
+              <text x="322" y="187" fill="#0B1B36" font-family="Inter, sans-serif" font-weight="600" font-size="9.5">Otomatis &amp; HOTS</text>
+
+              <rect x="45" y="255" width="330" height="14" rx="7" fill="#2DD4BF" opacity="0.85"/>
+              <rect x="95" y="280" width="230" height="36" rx="18" fill="#061022" stroke="#2DD4BF" stroke-width="1.5"/>
+              <text x="210" y="302" text-anchor="middle" fill="#FBBF24" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="12">
+                KURIKULUM MERDEKA &amp; DEEP LEARNING
+              </text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t border-white/10 py-4 px-4 text-center text-xs text-slate-400">
+      Dikembangkan oleh <strong class="text-gold-400">Eti, S.Pd.SD</strong> &bull; &copy; 2026 GURU MASTER AI — Ekosistem Asisten Digital Pendidikan Indonesia.
+    </footer>
+  </section>
+
+  <!-- =====================================================================
+       VIEW 2: PENGATURAN PROFIL GURU
+  ====================================================================== -->
+  <section id="view-profile" class="hidden min-h-screen bg-slate-100 dark:bg-slate-950 py-8 px-4 sm:px-6 flex items-center justify-center">
+    <div class="max-w-3xl w-full bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+      <div class="bg-gradient-to-r from-navy-900 via-navy-800 to-turquoise-700 p-6 sm:p-8 text-white">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="inline-block text-xs font-bold uppercase tracking-wider bg-gold-500 text-navy-950 px-3 py-1 rounded-full mb-2">Langkah Identitas Pendidik</span>
+            <h2 class="font-display font-extrabold text-2xl sm:text-3xl">Profil Guru &amp; Satuan Pendidikan</h2>
+            <p class="text-sm text-slate-200 mt-1">Data ini otomatis mengisi kop dokumen dan menyesuaikan pendekatan pembelajaran sesuai jenjang Anda.</p>
+          </div>
+          <button type="button" onclick="switchView('view-landing')" class="text-xs bg-white/15 hover:bg-white/25 px-3.5 py-2 rounded-xl font-semibold transition shrink-0">
+            &larr; Kembali
+          </button>
+        </div>
+      </div>
+
+      <form id="profile-form" onsubmit="saveTeacherProfile(event)" class="p-6 sm:p-8 space-y-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-semibold mb-1.5">Nama Lengkap &amp; Gelar Guru <span class="text-rose-500">*</span></label>
+            <input type="text" id="prof-nama" required placeholder="Contoh: Eti, S.Pd.SD" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-turquoise-500 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1.5">Nama Sekolah / Satuan Pendidikan <span class="text-rose-500">*</span></label>
+            <input type="text" id="prof-sekolah" required placeholder="Contoh: SD Negeri 1 Nusantara" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-turquoise-500 outline-none text-sm" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-semibold mb-1.5">NIP / NUPTK <span class="text-slate-400 font-normal">(Opsional)</span></label>
+            <input type="text" id="prof-nip" placeholder="Contoh: 19850412 201001 2 012" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-turquoise-500 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1.5">Jenjang Pendidikan <span class="text-rose-500">*</span></label>
+            <select id="prof-jenjang" onchange="updateJenjangHint()" required class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-turquoise-500 outline-none text-sm font-medium">
+              <option value="PAUD/TK">PAUD / TK (Pendidikan Anak Usia Dini)</option>
+              <option value="SD/MI" selected>SD / MI (Sekolah Dasar / Madrasah Ibtidaiyah)</option>
+              <option value="SMP/MTs">SMP / MTs (Sekolah Menengah Pertama)</option>
+              <option value="SMA/MA">SMA / MA (Sekolah Menengah Atas)</option>
+              <option value="SMK">SMK (Sekolah Menengah Kejuruan)</option>
+              <option value="SLB">SLB (Sekolah Luar Biasa / Pendidikan Khusus)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="jenjang-adaptation-box" class="p-3.5 rounded-2xl bg-turquoise-50 dark:bg-turquoise-900/25 border border-turquoise-200 dark:border-turquoise-800 text-xs sm:text-sm text-turquoise-900 dark:text-turquoise-200 flex items-start gap-3">
+          <span class="text-lg">🎯</span>
+          <div>
+            <strong class="font-bold">Mode Adaptif Jenjang Aktif:</strong>
+            <span id="jenjang-adaptation-text">SD/MI — Menggunakan bahasa sederhana, konkret, kontekstual, dan aktivitas belajar aktif sesuai tahap perkembangan usia anak.</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-semibold mb-1.5">Kelas / Fase yang Diajar <span class="text-rose-500">*</span></label>
+            <input type="text" id="prof-kelas" required placeholder="Contoh: Kelas V / Fase C" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-turquoise-500 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1.5">Mata Pelajaran / Bidang <span class="text-rose-500">*</span></label>
+            <input type="text" id="prof-mapel" required placeholder="Contoh: IPAS (Ilmu Pengetahuan Alam dan Sosial)" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-turquoise-500 outline-none text-sm" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-semibold mb-1.5">Kabupaten / Kota <span class="text-rose-500">*</span></label>
+            <input type="text" id="prof-kota" required placeholder="Contoh: Kabupaten Bandung" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-turquoise-500 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1.5">Tahun Pelajaran <span class="text-rose-500">*</span></label>
+            <input type="text" id="prof-tahun" required value="2026/2027" placeholder="2026/2027" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-turquoise-500 outline-none text-sm" />
+          </div>
+        </div>
+
+        <div class="pt-3 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-200 dark:border-slate-800">
+          <button type="button" onclick="fillSampleProfileForm()" class="w-full sm:w-auto text-sm font-semibold text-turquoise-700 dark:text-turquoise-400 hover:underline py-2">
+            Isi Otomatis Data Contoh
+          </button>
+          <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-navy-900 hover:bg-navy-800 dark:bg-turquoise-600 dark:hover:bg-turquoise-500 text-white font-display font-bold px-8 py-3.5 rounded-2xl shadow-lg transition">
+            <span>Simpan Profil &amp; Masuk Dashboard</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       VIEW 3: APLIKASI UTAMA (DASHBOARD & 12 MENU LAYANAN)
+  ====================================================================== -->
+  <div id="view-app" class="hidden min-h-screen flex flex-col lg:flex-row">
+    
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="mobile-drawer-backdrop" onclick="toggleMobileDrawer(false)" class="fixed inset-0 bg-navy-950/60 backdrop-blur-sm z-30 hidden lg:hidden"></div>
+
+    <!-- Navigation Sidebar -->
+    <aside id="app-sidebar" class="fixed lg:sticky top-0 left-0 z-40 h-screen w-72 bg-navy-900 text-white flex flex-col border-r border-navy-800 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shrink-0">
+      <div class="p-4 border-b border-navy-800 flex items-center justify-between">
+        <button type="button" onclick="navigateTo('dashboard')" class="flex items-center gap-2.5 text-left">
+          <div class="w-9 h-9 rounded-xl bg-turquoise-500/20 border border-turquoise-400/40 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6" viewBox="0 0 40 40" fill="none">
+              <path d="M6 12C10.5 10.5 16 11.5 20 14.5C24 11.5 29.5 10.5 34 12V30C29.5 28.5 24 29.5 20 32.5C16 29.5 10.5 28.5 6 30V12Z" stroke="#2DD4BF" stroke-width="2.4"/>
+              <circle cx="20" cy="7" r="2.5" fill="#FBBF24"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-display font-extrabold text-base leading-tight">GURU MASTER <span class="text-gold-400">AI</span></div>
+            <div class="text-[10px] text-turquoise-300">Satu Aplikasi, Sejuta Solusi</div>
+          </div>
+        </button>
+        <button type="button" onclick="toggleMobileDrawer(false)" class="lg:hidden p-2 rounded-lg text-slate-300 hover:bg-white/10">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Sidebar Navigation Links -->
+      <nav id="sidebar-nav" class="flex-1 overflow-y-auto p-3 space-y-1 text-sm"></nav>
+
+      <!-- Sidebar Footer: Profile Mini Card -->
+      <div class="p-3 border-t border-navy-800 bg-navy-950/50">
+        <div class="flex items-center gap-2.5 mb-2.5">
+          <div id="sidebar-avatar" class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 text-navy-950 font-display font-extrabold flex items-center justify-center text-sm shrink-0">GM</div>
+          <div class="min-w-0 flex-1">
+            <div id="sidebar-teacher-name" class="font-semibold text-xs text-white truncate">Nama Guru</div>
+            <div id="sidebar-teacher-meta" class="text-[11px] text-turquoise-300 truncate">Jenjang • Mapel</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-1.5">
+          <button type="button" onclick="switchView('view-profile')" class="text-xs bg-white/10 hover:bg-white/15 py-1.5 px-2 rounded-lg font-medium transition text-center">Edit Profil</button>
+          <button type="button" onclick="openSettingsModal()" class="text-xs bg-turquoise-600/30 hover:bg-turquoise-600/50 text-turquoise-200 py-1.5 px-2 rounded-lg font-medium transition text-center">Pengaturan</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Right Workspace -->
+    <div class="flex-1 flex flex-col min-w-0 pb-20 lg:pb-0">
+      <!-- Top App Bar -->
+      <header class="sticky top-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <button type="button" onclick="toggleMobileDrawer(true)" class="lg:hidden p-2.5 rounded-xl bg-navy-900 text-white hover:bg-navy-800 transition shrink-0" aria-label="Buka Menu">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <div class="min-w-0">
+            <h1 id="topbar-title" class="font-display font-extrabold text-base sm:text-lg text-navy-900 dark:text-white truncate">Dashboard Utama</h1>
+            <p id="topbar-subtitle" class="text-xs text-slate-500 dark:text-slate-400 truncate">Satu Aplikasi, Sejuta Solusi untuk Guru</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <span id="topbar-jenjang-badge" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-navy-900 text-gold-400 dark:bg-turquoise-900/50 dark:text-turquoise-300">
+            SD/MI
+          </span>
+
+          <button type="button" onclick="navigateTo('koleksi')" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-turquoise-50 dark:bg-turquoise-900/30 text-turquoise-700 dark:text-turquoise-300 border border-turquoise-200 dark:border-turquoise-800 hover:bg-turquoise-100 transition">
+            <span>📁 Koleksi</span>
+            <span id="topbar-collection-count" class="bg-turquoise-600 text-white px-1.5 py-0.5 rounded-full text-[10px]">0</span>
+          </button>
+
+          <button type="button" onclick="openHelpModal()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition" title="Panduan Penggunaan">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </button>
+
+          <button type="button" onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition" title="Ganti Tema Terang/Gelap">
+            <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Dynamic Workspace Content -->
+      <main id="main-workspace" class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto"></main>
+    </div>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="lg:hidden fixed bottom-0 inset-x-0 z-20 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 grid grid-cols-5 py-1.5 px-1 text-[11px] font-semibold shadow-lg">
+      <button type="button" onclick="navigateTo('dashboard')" class="flex flex-col items-center justify-center py-1 text-navy-900 dark:text-turquoise-400">
+        <span class="text-base">🏠</span>
+        <span>Beranda</span>
+      </button>
+      <button type="button" onclick="navigateTo('menu-1')" class="flex flex-col items-center justify-center py-1 text-slate-600 dark:text-slate-300">
+        <span class="text-base">📘</span>
+        <span>Perangkat</span>
+      </button>
+      <button type="button" onclick="navigateTo('menu-4')" class="flex flex-col items-center justify-center py-1 text-slate-600 dark:text-slate-300">
+        <span class="text-base">🎮</span>
+        <span>Game</span>
+      </button>
+      <button type="button" onclick="navigateTo('menu-12')" class="flex flex-col items-center justify-center py-1 text-slate-600 dark:text-slate-300">
+        <span class="text-base">🤖</span>
+        <span>Asisten AI</span>
+      </button>
+      <button type="button" onclick="toggleMobileDrawer(true)" class="flex flex-col items-center justify-center py-1 text-slate-600 dark:text-slate-300">
+        <span class="text-base">☰</span>
+        <span>Semua Menu</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- =====================================================================
+       APPLICATION JAVASCRIPT ENGINE (COMPLETE & SELF-CONTAINED)
+  ====================================================================== -->
+  <script>
+    /*************************************************************************
+     * 1. MASTER STATE & PEDAGOGICAL CONFIGURATION
+     *************************************************************************/
+    const DEV_DEFAULT_PHOTO = 'https://iili.io/oK0I2gj.jpg';
+
+    function safeStorageGet(key, fallback) {
+      try {
+        const val = localStorage.getItem(key);
+        return val !== null ? val : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function safeStorageSet(key, val) {
+      try {
+        localStorage.setItem(key, val);
+      } catch (e) {}
+    }
+
+    function safeJsonGet(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    const APP_STATE = {
+      activeView: 'view-landing',
+      activeRoute: 'dashboard',
+      theme: safeStorageGet('gma_theme', 'light'),
+      customApiKey: safeStorageGet('gma_api_key', ''),
+      aiModel: safeStorageGet('gma_ai_model', 'gemini-2.5-flash'),
+      aiStatus: 'Mesin Pedagogis & AI Aktif',
+      developer: {
+        name: 'Eti, S.Pd.SD',
+        role: 'Pengembang & Inisiator GURU MASTER AI',
+        defaultPhotoUrl: DEV_DEFAULT_PHOTO,
+        photoDataUrl: safeStorageGet('gma_dev_photo', DEV_DEFAULT_PHOTO),
+        bio: 'Pendidik Indonesia yang berdedikasi menghadirkan solusi digital berbasis kecerdasan buatan untuk membantu guru menyusun perangkat pembelajaran, asesmen, media interaktif, dan administrasi kelas secara efektif.'
+      },
+      profile: safeJsonGet('gma_profile', {
+        nama: 'Eti, S.Pd.SD',
+        sekolah: 'SD Negeri 1 Nusantara',
+        nip: '19850412 201001 2 012',
+        jenjang: 'SD/MI',
+        kelas: 'Kelas V / Fase C',
+        mapel: 'IPAS (Ilmu Pengetahuan Alam dan Sosial)',
+        kota: 'Kabupaten Bandung',
+        tahun: '2026/2027'
+      }),
+      collections: safeJsonGet('gma_collections', []),
+      usageCounts: safeJsonGet('gma_usage_counts', { 'menu-1': 3, 'menu-2': 2, 'menu-4': 2, 'menu-12': 1 }),
+      recentHistory: safeJsonGet('gma_recent_history', []),
+      adminData: safeJsonGet('gma_admin_data', {
+        jurnal: [
+          { id: 1, tanggal: '2026-11-18', kelas: 'Kelas V', mapel: 'IPAS', materi: 'Ekosistem dan Jaring-Jaring Makanan', metode: 'Diskusi & Observasi Lingkungan', keterangan: '95% siswa aktif menyusun bagan rantai makanan.' }
+        ],
+        absensi: [
+          { id: 1, tanggal: '2026-11-18', kelas: 'Kelas V', hadir: 28, sakit: 1, izin: 1, alpa: 0, catatan: 'Ananda Raka izin mengikuti lomba pramuka.' }
+        ],
+        agenda: [
+          { id: 1, tanggal: '2026-11-25', kegiatan: 'Peringatan Hari Guru Nasional & Gelar Karya Siswa', penanggungJawab: 'Wali Kelas & Komite', status: 'Terjadwal' }
+        ],
+        perkembangan: [
+          { id: 1, siswa: 'Siswa-01 (A.P.)', aspek: 'Bernalar Kritis & Kolaborasi', catatan: 'Sangat antusias saat praktikum kelompok dan mampu mempresentasikan hasil pengamatan dengan percaya diri.' }
+        ],
+        prota: [
+          { id: 1, semester: 'Ganjil', elemen: 'Pemahaman IPAS', materiPokok: 'Cahaya, Bunyi, dan Harmoni dalam Ekosistem', alokasi: '36 JP' }
+        ],
+        promes: [
+          { id: 1, bulan: 'Juli - Agustus', minggu: 'Minggu 1 - 6', tujuan: 'Menganalisis sifat-sifat cahaya dan bunyi dalam kehidupan sehari-hari', alokasi: '18 JP' }
+        ],
+        jadwal: [
+          { id: 1, hari: 'Senin', jam: '07.30 - 09.15', kelas: 'Kelas V', mapel: 'IPAS', ruang: 'Ruang Kelas V-A' },
+          { id: 2, hari: 'Rabu', jam: '09.30 - 11.15', kelas: 'Kelas V', mapel: 'Matematika', ruang: 'Ruang Kelas V-A' }
+        ],
+        refleksi: [
+          { id: 1, tanggal: '2026-11-18', topik: 'Pembelajaran Berdiferensiasi Ekosistem', keberhasilan: 'Media kartu gambar ekosistem sangat membantu siswa visual.', tindakLanjut: 'Menyiapkan tantangan proyek mini untuk kelompok mahir.' }
+        ],
+        kelas: [
+          { id: 1, item: 'Pojok Baca & Literasi Kelas', kondisi: 'Baik & Terawat', jumlah: '45 Buku', keterangan: 'Diperbarui setiap awal bulan.' }
+        ]
+      }),
+      chatHistory: safeJsonGet('gma_chat_history', [
+        {
+          role: 'ai',
+          time: 'Hari ini',
+          text: 'Assalamu’alaikum dan salam sejahtera, Bapak/Ibu Guru! Saya **Asisten Guru AI**. Saya siap membantu merancang strategi pembelajaran, ice breaking kelas, ide proyek siswa, diferensiasi materi, hingga solusi permasalahan belajar di kelas Anda. Silakan ketik pertanyaan atau pilih ide cepat di bawah ini.'
+        }
+      ]),
+      learnedModules: safeJsonGet('gma_learned_modules', ['deep-learning']),
+      tipIndex: 0
+    };
+
+    const JENJANG_RULES = {
+      'PAUD/TK': {
+        fase: 'Fase Fondasi',
+        pendekatan: 'Bermain bermakna, eksplorasi sensorik, bercerita, bernyanyi, dan stimulasi 6 aspek perkembangan anak usia dini.',
+        bahasa: 'Sederhana, hangat, penuh kasih sayang, konkret, dan mengajak anak bergerak serta mengamati.',
+        kognitif: 'Mengenal, meniru, mengelompokkan benda sederhana, dan bercerita pengalaman.'
+      },
+      'SD/MI': {
+        fase: 'Fase A / B / C',
+        pendekatan: 'Pembelajaran konkret, kontekstual, bermain peran, eksperimen sederhana, dan penguatan literasi-numerasi dasar.',
+        bahasa: 'Jelas, komunikatif, ramah anak, menggunakan contoh benda-benda di sekitar siswa.',
+        kognitif: 'Pemahaman konsep dasar, penerapan sederhana, hingga pengenalan penalaran HOTS bertahap.'
+      },
+      'SMP/MTs': {
+        fase: 'Fase D',
+        pendekatan: 'Inkuiri ilmiah, diskusi kolaboratif, pemecahan masalah (PBL), proyek berbasis konteks sosial/alam, dan berpikir kritis.',
+        bahasa: 'Semi-akademis yang komunikatif, mendorong rasa ingin tahu, argumentasi logis, dan refleksi.',
+        kognitif: 'Analisis hubungan sebab-akibat, evaluasi data, dan pemecahan masalah kontekstual (C3–C5).'
+      },
+      'SMA/MA': {
+        fase: 'Fase E / F',
+        pendekatan: 'Pembelajaran konseptual, analitis, riset mini, studi kasus mendalam, debat ilmiah, dan pembelajaran mendalam (Deep Learning).',
+        bahasa: 'Akademis, sistematis, presisi terminologi keilmuan, dan mendorong kemandirian intelektual.',
+        kognitif: 'Analisis kompleks, sintesis lintas disiplin, evaluasi kritis, dan kreasi solusi (C4–C6).'
+      },
+      'SMK': {
+        fase: 'Fase E / F Vokasi',
+        pendekatan: 'Teaching Factory (TeFa), Project-Based Learning berbasis produk/jasa, standar K3LH, budaya kerja industri, dan uji kompetensi.',
+        bahasa: 'Praktis, teknis profesional sesuai bidang keahlian, berorientasi prosedur kerja (SOP) dan dunia usaha/industri (DUDIKA).',
+        kognitif: 'Penerapan teknis, troubleshooting, efisiensi kerja, dan produk siap pakai.'
+      },
+      'SLB': {
+        fase: 'Fase A–F Pendidikan Khusus (Berdasarkan Usia Mental)',
+        pendekatan: 'Program Pembelajaran Individual (PPI), multisensori, visualisasi jelas, langkah bertahap (task analysis), dan bina diri/kemandirian.',
+        bahasa: 'Sangat jelas, instruksi singkat satu per satu, ramah inklusif, positif, dan mendukung aksesibilitas.',
+        kognitif: 'Disesuaikan profil kemampuan peserta didik dengan fokus kemandirian, komunikasi fungsional, dan keterampilan hidup.'
+      }
+    };
+
+    const MENU_ITEMS = [
+      { id: 'menu-1', num: '01', title: 'Perangkat Pembelajaran', short: 'Modul Ajar, ATP, RPP', icon: '📘', color: 'from-blue-600 to-navy-800', badge: 'Kurikulum' },
+      { id: 'menu-2', num: '02', title: 'Bank Soal & Asesmen', short: 'Soal HOTS, Kisi-Kisi, Rubrik', icon: '📝', color: 'from-turquoise-600 to-teal-800', badge: 'Evaluasi' },
+      { id: 'menu-3', num: '03', title: 'LKPD Generator', short: 'Lembar Kerja Berwarna & B/W', icon: '📄', color: 'from-emerald-600 to-teal-700', badge: 'Aktivitas' },
+      { id: 'menu-4', num: '04', title: 'Game Edukasi', short: '10 Game Interaktif Langsung', icon: '🎮', color: 'from-amber-500 to-orange-600', badge: 'Interaktif' },
+      { id: 'menu-5', num: '05', title: 'Presentasi AI', short: 'Slide Pembelajaran Otomatis', icon: '🖥️', color: 'from-indigo-600 to-navy-800', badge: 'Media' },
+      { id: 'menu-6', num: '06', title: 'Cerita & Video Belajar', short: 'Dongeng, Naskah, Storyboard', icon: '🎬', color: 'from-purple-600 to-indigo-800', badge: 'Kreatif' },
+      { id: 'menu-7', num: '07', title: 'Raport & Deskripsi Siswa', short: 'Narasi Capaian Objektif', icon: '🎓', color: 'from-sky-600 to-blue-800', badge: 'Penilaian' },
+      { id: 'menu-8', num: '08', title: 'Administrasi Guru', short: 'Jurnal, Absensi, Prota, Jadwal', icon: '🗂️', color: 'from-slate-700 to-navy-900', badge: 'Manajemen' },
+      { id: 'menu-9', num: '09', title: 'Perpustakaan Digital', short: 'Buku Resmi Kemendikbud & Bahan', icon: '📚', color: 'from-teal-600 to-emerald-800', badge: 'Referensi' },
+      { id: 'menu-10', num: '10', title: 'Guru Belajar', short: 'Deep Learning, Koding, AI, Canva', icon: '💡', color: 'from-yellow-500 to-amber-600', badge: 'Kompetensi' },
+      { id: 'menu-11', num: '11', title: 'Komunikasi Sekolah', short: 'Surat Dinas, Undangan, Notulen', icon: '✉️', color: 'from-cyan-600 to-blue-700', badge: 'Persuratan' },
+      { id: 'menu-12', num: '12', title: 'Asisten Guru AI', short: 'Chatbot Konsultan Pendidikan', icon: '🤖', color: 'from-navy-800 to-turquoise-700', badge: 'AI Chat' }
+    ];
+
+    const TEACHING_TIPS = [
+      'Gunakan teknik "Pertanyaan Pemantik 3 Menit" di awal pelajaran yang terhubung dengan pengalaman sehari-hari murid untuk mengaktifkan rasa ingin tahu.',
+      'Terapkan diferensiasi proses sederhana: berikan pilihan cara murid menunjukkan pemahaman (poster, cerita lisan, peta konsep, atau simulasi).',
+      'Saat memberikan umpan balik tugas, gunakan pola "2 Bintang 1 Harapan": sebutkan 2 hal yang sudah bagus dan 1 saran spesifik untuk perbaikan.',
+      'Sisipkan jeda otak (brain break) selama 2 menit di tengah pelajaran berdurasi panjang agar fokus dan emosi belajar siswa kembali segar.',
+      'Gunakan pertanyaan terbuka seperti "Mengapa menurutmu demikian?" atau "Bagaimana jika kondisinya diubah?" untuk melatih nalar HOTS.'
+    ];
+
+    /*************************************************************************
+     * 2. CORE UTILITIES: NAVIGATION, TOAST, MODAL, CLIPBOARD, EXPORT
+     *************************************************************************/
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const colors = {
+        success: 'bg-emerald-600 text-white border-emerald-400',
+        error: 'bg-rose-600 text-white border-rose-400',
+        info: 'bg-navy-900 text-white border-turquoise-400'
+      };
+      const icons = { success: '✅', error: '⚠️', info: '✨' };
+      const el = document.createElement('div');
+      el.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl shadow-xl border text-xs sm:text-sm font-semibold transform transition-all duration-300 ${colors[type] || colors.info}`;
+      el.innerHTML = `<span>${icons[type] || '✨'}</span><span class="flex-1">${escapeHtml(message)}</span>`;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-8px)';
+        setTimeout(() => el.remove(), 300);
+      }, 3200);
+    }
+
+    function openModal({ title, bodyHtml, footerHtml = '' }) {
+      const modal = document.getElementById('global-modal');
+      document.getElementById('global-modal-title').textContent = title;
+      document.getElementById('global-modal-body').innerHTML = bodyHtml;
+      document.getElementById('global-modal-footer').innerHTML = footerHtml || `<button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold">Tutup</button>`;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('global-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function switchView(viewId) {
+      ['view-landing', 'view-profile', 'view-app'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          if (id === viewId) el.classList.remove('hidden');
+          else el.classList.add('hidden');
+        }
+      });
+      APP_STATE.activeView = viewId;
+      if (viewId === 'view-profile') {
+        populateProfileForm();
+      } else if (viewId === 'view-app') {
+        syncProfileUI();
+        renderSidebar();
+        navigateTo(APP_STATE.activeRoute || 'dashboard');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleMobileDrawer(open) {
+      const sidebar = document.getElementById('app-sidebar');
+      const backdrop = document.getElementById('mobile-drawer-backdrop');
+      if (!sidebar || !backdrop) return;
+      if (open) {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+    }
+
+    function toggleTheme() {
+      APP_STATE.theme = APP_STATE.theme === 'dark' ? 'light' : 'dark';
+      safeStorageSet('gma_theme', APP_STATE.theme);
+      applyTheme();
+    }
+
+    function applyTheme() {
+      const root = document.documentElement;
+      if (APP_STATE.theme === 'dark') root.classList.add('dark');
+      else root.classList.remove('dark');
+    }
+
+    function copyTextToClipboard(text, successMsg = 'Teks berhasil disalin ke clipboard!') {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg, 'success');
+      } catch (e) {
+        showToast('Gagal menyalin otomatis. Silakan blok teks dan salin manual.', 'error');
+      }
+      document.body.removeChild(ta);
+    }
+
+    function copyElementContent(elementId) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      copyTextToClipboard(el.innerText || el.textContent, 'Dokumen berhasil disalin!');
+    }
+
+    function printDocumentElement(elementId, docTitle = 'Dokumen Guru Master AI') {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const p = APP_STATE.profile;
+      const printArea = document.getElementById('print-area');
+      printArea.innerHTML = `
+        <div class="edu-doc" style="font-family: 'Times New Roman', serif; color: #000;">
+          <div style="border-bottom: 3px double #000; padding-bottom: 8px; margin-bottom: 14px; text-align: center;">
+            <div style="font-size: 14pt; font-weight: bold; text-transform: uppercase;">${escapeHtml(p.sekolah)}</div>
+            <div style="font-size: 10pt;">${escapeHtml(p.kota)} &bull; Tahun Pelajaran ${escapeHtml(p.tahun)}</div>
+          </div>
+          ${el.innerHTML}
+          <table style="width: 100%; border: none; margin-top: 28px;">
+            <tr>
+              <td style="border: none; width: 50%; text-align: center;">
+                Mengetahui,<br>Kepala ${escapeHtml(p.sekolah)}<br><br><br><br>
+                <u>....................................................</u><br>NIP. ........................................
+              </td>
+              <td style="border: none; width: 50%; text-align: center;">
+                ${escapeHtml(p.kota)}, ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}<br>
+                Guru Mata Pelajaran / Kelas<br><br><br><br>
+                <u><strong>${escapeHtml(p.nama)}</strong></u><br>
+                ${p.nip ? 'NIP. ' + escapeHtml(p.nip) : ''}
+              </td>
+            </tr>
+          </table>
+        </div>
+      `;
+      printArea.classList.remove('hidden');
+      setTimeout(() => {
+        window.print();
+        printArea.classList.add('hidden');
+      }, 150);
+    }
+
+    function downloadDocxElement(elementId, filename = 'Dokumen_Guru_Master_AI') {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const p = APP_STATE.profile;
+      const htmlContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset='utf-8'><title>${escapeHtml(filename)}</title>
+        <style>
+          body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; line-height: 1.5; }
+          table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+          th, td { border: 1px solid #444; padding: 6px; text-align: left; }
+          th { background-color: #f0f4f8; }
+          h1 { font-size: 15pt; color: #0B1B36; }
+          h2 { font-size: 13pt; color: #0F766E; }
+        </style>
+        </head>
+        <body>
+          <div style="text-align:center; border-bottom:2px solid #0B1B36; padding-bottom:8px; margin-bottom:14px;">
+            <strong>${escapeHtml(p.sekolah)}</strong><br>
+            <span>${escapeHtml(p.kota)} — Tahun Pelajaran ${escapeHtml(p.tahun)}</span>
+          </div>
+          ${el.innerHTML}
+          <br><br>
+          <table style="border:none; width:100%;">
+            <tr>
+              <td style="border:none; text-align:center; width:50%;">Mengetahui,<br>Kepala Sekolah<br><br><br><u>..........................</u></td>
+              <td style="border:none; text-align:center; width:50%;">${escapeHtml(p.kota)}, ${new Date().toLocaleDateString('id-ID')}<br>Guru Pengampu<br><br><br><u><strong>${escapeHtml(p.nama)}</strong></u><br>${escapeHtml(p.nip || '')}</td>
+            </tr>
+          </table>
+        </body></html>
+      `;
+      const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename.replace(/[^a-zA-Z0-9_-]/g, '_') + '.doc';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Berkas Word (.doc) berhasil diunduh!', 'success');
+    }
+
+    function saveToCollection({ title, category, htmlContent }) {
+      const item = {
+        id: 'doc_' + Date.now(),
+        title: title || 'Dokumen Tanpa Judul',
+        category: category || 'Umum',
+        jenjang: APP_STATE.profile.jenjang,
+        date: new Date().toISOString().slice(0, 10),
+        createdAt: new Date().toLocaleString('id-ID'),
+        htmlContent
+      };
+      APP_STATE.collections.unshift(item);
+      safeStorageSet('gma_collections', JSON.stringify(APP_STATE.collections));
+      addRecentHistory(category, title);
+      updateCollectionBadge();
+      showToast('Berhasil disimpan ke Koleksi Saya!', 'success');
+    }
+
+    function addRecentHistory(category, title) {
+      APP_STATE.recentHistory.unshift({
+        category,
+        title,
+        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+      });
+      APP_STATE.recentHistory = APP_STATE.recentHistory.slice(0, 8);
+      safeStorageSet('gma_recent_history', JSON.stringify(APP_STATE.recentHistory));
+    }
+
+    function updateCollectionBadge() {
+      const badge = document.getElementById('topbar-collection-count');
+      if (badge) badge.textContent = APP_STATE.collections.length;
+    }
+
+    /*************************************************************************
+     * 3. PROFILE MANAGEMENT
+     *************************************************************************/
+    function populateProfileForm() {
+      const p = APP_STATE.profile;
+      document.getElementById('prof-nama').value = p.nama || '';
+      document.getElementById('prof-sekolah').value = p.sekolah || '';
+      document.getElementById('prof-nip').value = p.nip || '';
+      document.getElementById('prof-jenjang').value = p.jenjang || 'SD/MI';
+      document.getElementById('prof-kelas').value = p.kelas || '';
+      document.getElementById('prof-mapel').value = p.mapel || '';
+      document.getElementById('prof-kota').value = p.kota || '';
+      document.getElementById('prof-tahun').value = p.tahun || '2026/2027';
+      updateJenjangHint();
+    }
+
+    function updateJenjangHint() {
+      const j = document.getElementById('prof-jenjang').value;
+      const rule = JENJANG_RULES[j] || JENJANG_RULES['SD/MI'];
+      document.getElementById('jenjang-adaptation-text').textContent = `${j} (${rule.fase}) — ${rule.pendekatan}`;
+    }
+
+    function fillSampleProfileForm() {
+      document.getElementById('prof-nama').value = 'Eti, S.Pd.SD';
+      document.getElementById('prof-sekolah').value = 'SD Negeri 1 Nusantara';
+      document.getElementById('prof-nip').value = '19850412 201001 2 012';
+      document.getElementById('prof-jenjang').value = 'SD/MI';
+      document.getElementById('prof-kelas').value = 'Kelas V / Fase C';
+      document.getElementById('prof-mapel').value = 'IPAS (Ilmu Pengetahuan Alam dan Sosial)';
+      document.getElementById('prof-kota').value = 'Kabupaten Bandung';
+      document.getElementById('prof-tahun').value = '2026/2027';
+      updateJenjangHint();
+      showToast('Data profil contoh telah diisikan.', 'info');
+    }
+
+    function saveTeacherProfile(e) {
+      e.preventDefault();
+      APP_STATE.profile = {
+        nama: document.getElementById('prof-nama').value.trim(),
+        sekolah: document.getElementById('prof-sekolah').value.trim(),
+        nip: document.getElementById('prof-nip').value.trim(),
+        jenjang: document.getElementById('prof-jenjang').value,
+        kelas: document.getElementById('prof-kelas').value.trim(),
+        mapel: document.getElementById('prof-mapel').value.trim(),
+        kota: document.getElementById('prof-kota').value.trim(),
+        tahun: document.getElementById('prof-tahun').value.trim()
+      };
+      safeStorageSet('gma_profile', JSON.stringify(APP_STATE.profile));
+      showToast(`Profil ${APP_STATE.profile.nama} (${APP_STATE.profile.jenjang}) disimpan!`, 'success');
+      APP_STATE.activeRoute = 'dashboard';
+      switchView('view-app');
+    }
+
+    function quickDemoLogin() {
+      APP_STATE.activeRoute = 'dashboard';
+      switchView('view-app');
+      showToast(`Selamat datang kembali, ${APP_STATE.profile.nama}!`, 'success');
+    }
+
+    function syncProfileUI() {
+      const p = APP_STATE.profile;
+      const initials = (p.nama || 'GM').split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
+      const av = document.getElementById('sidebar-avatar');
+      const nm = document.getElementById('sidebar-teacher-name');
+      const mt = document.getElementById('sidebar-teacher-meta');
+      const jb = document.getElementById('topbar-jenjang-badge');
+      if (av) av.textContent = initials || 'GM';
+      if (nm) nm.textContent = p.nama;
+      if (mt) mt.textContent = `${p.jenjang} • ${p.kelas}`;
+      if (jb) jb.textContent = `${p.jenjang} • ${p.kelas}`;
+      updateCollectionBadge();
+    }
+
+    /*************************************************************************
+     * 4. SIDEBAR & ROUTING ENGINE
+     *************************************************************************/
+    function renderSidebar() {
+      const nav = document.getElementById('sidebar-nav');
+      if (!nav) return;
+      const active = APP_STATE.activeRoute;
+      const linkClass = (id) => active === id
+        ? 'bg-turquoise-500 text-navy-950 font-bold shadow-md'
+        : 'text-slate-300 hover:bg-white/10 hover:text-white font-medium';
+
+      let html = `
+        <button type="button" onclick="navigateTo('dashboard')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition ${linkClass('dashboard')}">
+          <span class="text-base">🏠</span>
+          <span class="truncate">Dashboard Utama</span>
+        </button>
+        <button type="button" onclick="navigateTo('koleksi')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${linkClass('koleksi')}">
+          <span class="flex items-center gap-3 truncate"><span class="text-base">📁</span><span>Koleksi Saya</span></span>
+          <span class="text-[11px] px-2 py-0.5 rounded-full ${active === 'koleksi' ? 'bg-navy-900 text-gold-400' : 'bg-white/10 text-turquoise-300'}">${APP_STATE.collections.length}</span>
+        </button>
+        <div class="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">12 Layanan Utama Guru</div>
+      `;
+
+      MENU_ITEMS.forEach(m => {
+        html += `
+          <button type="button" onclick="navigateTo('${m.id}')" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition text-left ${linkClass(m.id)}">
+            <span class="text-base shrink-0">${m.icon}</span>
+            <span class="truncate flex-1">${m.title}</span>
+          </button>
+        `;
+      });
+
+      html += `
+        <div class="pt-3 mt-3 border-t border-navy-800 space-y-1">
+          <button type="button" onclick="openAboutModal()" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white text-left transition">
+            <span>ℹ️</span><span>Tentang &amp; Pengembang</span>
+          </button>
+          <button type="button" onclick="switchView('view-landing')" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-300 hover:bg-rose-500/20 text-left transition">
+            <span>🚪</span><span>Halaman Pembuka</span>
+          </button>
+        </div>
+      `;
+      nav.innerHTML = html;
+    }
+
+    function navigateTo(routeId) {
+      APP_STATE.activeRoute = routeId;
+      toggleMobileDrawer(false);
+      renderSidebar();
+
+      if (routeId.startsWith('menu-')) {
+        APP_STATE.usageCounts[routeId] = (APP_STATE.usageCounts[routeId] || 0) + 1;
+        safeStorageSet('gma_usage_counts', JSON.stringify(APP_STATE.usageCounts));
+      }
+
+      const titleEl = document.getElementById('topbar-title');
+      const subEl = document.getElementById('topbar-subtitle');
+      const ws = document.getElementById('main-workspace');
+      const p = APP_STATE.profile;
+
+      if (routeId === 'dashboard') {
+        titleEl.textContent = 'Dashboard Utama';
+        subEl.textContent = `${p.sekolah} • ${p.jenjang} (${p.kelas})`;
+        renderDashboard(ws);
+      } else if (routeId === 'koleksi') {
+        titleEl.textContent = 'Koleksi Saya';
+        subEl.textContent = 'Arsip dokumen pembelajaran, soal, LKPD, dan surat tersimpan';
+        renderKoleksiSaya(ws);
+      } else {
+        const menuObj = MENU_ITEMS.find(x => x.id === routeId);
+        if (menuObj) {
+          titleEl.textContent = `${menuObj.icon} ${menuObj.title}`;
+          subEl.textContent = `${menuObj.short} • Adaptif Jenjang ${p.jenjang}`;
+        }
+        switch (routeId) {
+          case 'menu-1': renderMenu1Perangkat(ws); break;
+          case 'menu-2': renderMenu2BankSoal(ws); break;
+          case 'menu-3': renderMenu3Lkpd(ws); break;
+          case 'menu-4': renderMenu4GameEdukasi(ws); break;
+          case 'menu-5': renderMenu5Presentasi(ws); break;
+          case 'menu-6': renderMenu6CeritaVideo(ws); break;
+          case 'menu-7': renderMenu7Raport(ws); break;
+          case 'menu-8': renderMenu8Administrasi(ws); break;
+          case 'menu-9': renderMenu9Perpustakaan(ws); break;
+          case 'menu-10': renderMenu10GuruBelajar(ws); break;
+          case 'menu-11': renderMenu11Komunikasi(ws); break;
+          case 'menu-12': renderMenu12AsistenChat(ws); break;
+          default: renderDashboard(ws);
+        }
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /*************************************************************************
+     * 5. AI ENGINE (CONFIGURABLE GEMINI API + RICH PEDAGOGICAL GENERATOR)
+     *************************************************************************/
+    async function callAiService(promptText, fallbackHtmlGenerator) {
+      const apiKey = (APP_STATE.customApiKey || '').trim();
+      if (apiKey) {
+        try {
+          const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(APP_STATE.aiModel || 'gemini-2.5-flash')}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: promptText + '\n\nFormat hasil dalam HTML semantik yang rapi (gunakan tag <h1>, <h2>, <h3>, <p>, <ul>, <ol>, <table>, <tr>, <th>, <td>, <strong>) tanpa tag <html>/<body> dan tanpa blok markdown ```html.' }] }]
+            })
+          });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          const data = await resp.json();
+          const candidateText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (candidateText) {
+            return candidateText.replace(/^```html\s*/i, '').replace(/```\s*$/i, '').trim();
+          }
+        } catch (err) {
+          showToast('Koneksi API eksternal gagal, beralih ke Mesin Pedagogis Cerdas Lokal.', 'info');
+        }
+      }
+      await new Promise(r => setTimeout(r, 400));
+      return fallbackHtmlGenerator();
+    }
+
+    function renderResultToolbar(containerId, docTitle, category, extraControlsHtml = '') {
+      return `
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-200 dark:border-slate-700 no-print">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold">
+              ✏️ Dapat Diedit Langsung
+            </span>
+            ${extraControlsHtml}
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button type="button" onclick="saveDocumentById('${containerId}', '${escapeHtml(docTitle)}', '${escapeHtml(category)}')" class="px-3 py-1.5 rounded-xl bg-turquoise-600 hover:bg-turquoise-500 text-white text-xs font-bold transition">💾 Simpan</button>
+            <button type="button" onclick="copyElementContent('${containerId}')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-bold transition">📋 Salin</button>
+            <button type="button" onclick="printDocumentElement('${containerId}', '${escapeHtml(docTitle)}')" class="px-3 py-1.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold transition">🖨️ Cetak / PDF</button>
+            <button type="button" onclick="downloadDocxElement('${containerId}', '${escapeHtml(docTitle)}')" class="px-3 py-1.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 text-xs font-bold transition">📥 Word (.doc)</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function saveDocumentById(elementId, title, category) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      saveToCollection({ title, category, htmlContent: el.innerHTML });
+    }
+
+    /*************************************************************************
+     * 6. DASHBOARD UTAMA
+     *************************************************************************/
+    function renderDashboard(ws) {
+      const p = APP_STATE.profile;
+      const rule = JENJANG_RULES[p.jenjang] || JENJANG_RULES['SD/MI'];
+      const tip = TEACHING_TIPS[APP_STATE.tipIndex % TEACHING_TIPS.length];
+
+      const topUsedIds = Object.entries(APP_STATE.usageCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 4)
+        .map(([id]) => MENU_ITEMS.find(m => m.id === id))
+        .filter(Boolean);
+
+      ws.innerHTML = `
+        <div class="space-y-6">
+          <!-- Welcome Banner -->
+          <div class="bg-gradient-to-r from-navy-950 via-navy-900 to-turquoise-800 rounded-3xl p-5 sm:p-7 text-white shadow-xl relative overflow-hidden">
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+              <div class="space-y-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-gold-400 text-xs font-bold">
+                  <span>👋 Selamat Datang di Ekosistem Pendidik Cerdas</span>
+                </div>
+                <h2 class="font-display font-extrabold text-2xl sm:text-3xl">Halo, ${escapeHtml(p.nama)}!</h2>
+                <p class="text-sm text-slate-200">
+                  <strong>${escapeHtml(p.sekolah)}</strong> &bull; Jenjang <strong>${escapeHtml(p.jenjang)}</strong> (${escapeHtml(p.kelas)}) &bull; Mapel <strong>${escapeHtml(p.mapel)}</strong>
+                </p>
+                <p class="text-xs text-turquoise-300 max-w-2xl">
+                  Mode Adaptif Aktif: ${escapeHtml(rule.pendekatan)}
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-2.5 shrink-0">
+                <button type="button" onclick="switchView('view-profile')" class="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition">
+                  ✏️ Ubah Profil / Jenjang
+                </button>
+                <button type="button" onclick="navigateTo('menu-12')" class="px-4 py-2.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 text-xs font-extrabold shadow-lg transition">
+                  🤖 Tanya Asisten AI
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search Bar & Quick Stats -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+            <div class="lg:col-span-8 relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
+              <input type="text" id="dashboard-search-input" oninput="filterDashboardMenus(this.value)" placeholder="Cari layanan guru (contoh: Modul Ajar, Soal HOTS, LKPD, Game, Raport, Surat)..." class="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs focus:ring-2 focus:ring-turquoise-500 outline-none text-sm" />
+            </div>
+            <div class="lg:col-span-4 grid grid-cols-2 gap-3">
+              <div onclick="navigateTo('koleksi')" class="cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 flex items-center gap-3 hover:border-turquoise-500 transition">
+                <div class="w-10 h-10 rounded-xl bg-turquoise-100 dark:bg-turquoise-900/40 text-turquoise-700 dark:text-turquoise-300 flex items-center justify-center font-bold">📁</div>
+                <div>
+                  <div class="font-display font-extrabold text-lg">${APP_STATE.collections.length}</div>
+                  <div class="text-[11px] text-slate-500">Dokumen Tersimpan</div>
+                </div>
+              </div>
+              <div onclick="navigateTo('menu-8')" class="cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 flex items-center gap-3 hover:border-gold-500 transition">
+                <div class="w-10 h-10 rounded-xl bg-gold-100 dark:bg-amber-900/40 text-amber-700 dark:text-gold-400 flex items-center justify-center font-bold">🗂️</div>
+                <div>
+                  <div class="font-display font-extrabold text-lg">${APP_STATE.adminData.jurnal.length}</div>
+                  <div class="text-[11px] text-slate-500">Jurnal Mengajar</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 12 Menu Layanan Utama -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-display font-extrabold text-lg text-navy-900 dark:text-white">12 Layanan Utama Guru Master AI</h3>
+              <span class="text-xs text-slate-500">Klik kartu untuk membuka layanan</span>
+            </div>
+            <div id="dashboard-menu-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+              ${MENU_ITEMS.map(m => `
+                <button type="button" data-search="${escapeHtml((m.title + ' ' + m.short + ' ' + m.badge).toLowerCase())}" onclick="navigateTo('${m.id}')" class="dashboard-menu-card group text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-turquoise-500 dark:hover:border-turquoise-400 rounded-2xl p-4 shadow-xs hover:shadow-lg transition transform hover:-translate-y-0.5 flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="w-11 h-11 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center text-xl shadow-md">
+                        ${m.icon}
+                      </div>
+                      <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        ${m.badge}
+                      </span>
+                    </div>
+                    <h4 class="font-display font-bold text-base text-navy-900 dark:text-white group-hover:text-turquoise-600 dark:group-hover:text-turquoise-400 transition">
+                      ${m.num}. ${m.title}
+                    </h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${m.short}</p>
+                  </div>
+                  <div class="mt-4 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-turquoise-700 dark:text-turquoise-400">
+                    <span>Buka Layanan</span>
+                    <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                  </div>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Bottom 3 Widgets -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <!-- Fitur Sering Digunakan -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3">
+              <h4 class="font-display font-bold text-base flex items-center gap-2"><span>⭐</span><span>Fitur Sering Digunakan</span></h4>
+              <div class="space-y-2">
+                ${topUsedIds.map(m => `
+                  <button type="button" onclick="navigateTo('${m.id}')" class="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 hover:bg-turquoise-50 dark:hover:bg-turquoise-900/30 transition text-left">
+                    <span class="flex items-center gap-2.5 text-xs font-bold"><span>${m.icon}</span><span>${m.title}</span></span>
+                    <span class="text-[11px] text-turquoise-700 dark:text-turquoise-300 font-semibold">Buka &rarr;</span>
+                  </button>
+                `).join('')}
+              </div>
+              <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div class="text-xs font-bold text-slate-500 mb-1.5">Riwayat Pekerjaan Terakhir</div>
+                ${APP_STATE.recentHistory.length === 0
+                  ? `<p class="text-xs text-slate-400 italic">Belum ada dokumen baru dibuat pada sesi ini.</p>`
+                  : APP_STATE.recentHistory.slice(0, 3).map(h => `
+                      <div class="text-xs py-1 flex items-center justify-between gap-2">
+                        <span class="truncate font-medium">• ${escapeHtml(h.title)}</span>
+                        <span class="text-[10px] text-slate-400 shrink-0">${escapeHtml(h.time)}</span>
+                      </div>
+                    `).join('')
+                }
+              </div>
+            </div>
+
+            <!-- Tips Pembelajaran Hari Ini -->
+            <div class="bg-gradient-to-br from-amber-50 to-gold-100/70 dark:from-slate-900 dark:to-amber-950/30 border border-gold-300/60 dark:border-amber-800/50 rounded-2xl p-5 flex flex-col justify-between">
+              <div class="space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <span class="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-amber-800 dark:text-gold-400">💡 Tips Pembelajaran Hari Ini</span>
+                  <button type="button" onclick="nextTeachingTip()" class="text-xs font-bold text-navy-900 dark:text-turquoise-300 hover:underline">Tips Berikutnya &rarr;</button>
+                </div>
+                <p id="dashboard-tip-text" class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
+                  “${escapeHtml(tip)}”
+                </p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-amber-200/70 dark:border-slate-800 flex items-center justify-between text-xs text-amber-900 dark:text-amber-300">
+                <span>Jenjang: <strong>${escapeHtml(p.jenjang)}</strong></span>
+                <button type="button" onclick="navigateTo('menu-10')" class="font-bold underline">Eksplor Guru Belajar</button>
+              </div>
+            </div>
+
+            <!-- Informasi Aplikasi & Pengembang -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+              <div>
+                <h4 class="font-display font-bold text-base mb-2 flex items-center gap-2"><span>🛡️</span><span>Informasi &amp; Pengembang</span></h4>
+                <div class="p-3 rounded-xl bg-turquoise-50 dark:bg-turquoise-950/40 border border-turquoise-200 dark:border-turquoise-800 text-xs flex items-center justify-between mb-3">
+                  <span class="font-semibold text-turquoise-900 dark:text-turquoise-200">Status Sistem:</span>
+                  <span class="font-bold text-turquoise-700 dark:text-turquoise-400">${APP_STATE.aiStatus}</span>
+                </div>
+                <div onclick="openAboutModal()" class="cursor-pointer p-2.5 rounded-xl bg-navy-900 text-white flex items-center gap-3 hover:bg-navy-800 transition">
+                  <div data-w="44" data-h="56" class="dev-photo-slot w-11 h-14 rounded-lg overflow-hidden border border-gold-400 shrink-0 bg-sky-700">${getDeveloperAvatarMarkup('dash', 44, 56)}</div>
+                  <div class="min-w-0 flex-1">
+                    <div class="text-[10px] uppercase tracking-wider text-turquoise-300 font-bold">Pengembang Aplikasi</div>
+                    <div class="font-display font-bold text-xs text-gold-400 truncate">${escapeHtml(APP_STATE.developer.name)}</div>
+                    <div class="text-[10px] text-slate-300 truncate">Klik untuk profil / ganti foto</div>
+                  </div>
+                  <span class="text-xs text-slate-300 pr-1">&rarr;</span>
+                </div>
+              </div>
+              <button type="button" onclick="openSettingsModal()" class="mt-3 w-full py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-bold transition">
+                ⚙️ Konfigurasi AI &amp; Pengaturan
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function filterDashboardMenus(query) {
+      const q = (query || '').trim().toLowerCase();
+      document.querySelectorAll('.dashboard-menu-card').forEach(card => {
+        const hay = card.getAttribute('data-search') || '';
+        card.style.display = (!q || hay.includes(q)) ? '' : 'none';
+      });
+    }
+
+    function nextTeachingTip() {
+      APP_STATE.tipIndex = (APP_STATE.tipIndex + 1) % TEACHING_TIPS.length;
+      const el = document.getElementById('dashboard-tip-text');
+      if (el) el.textContent = `“${TEACHING_TIPS[APP_STATE.tipIndex]}”`;
+    }
+
+    /*************************************************************************
+     * 7. MENU 1: PERANGKAT PEMBELAJARAN
+     *************************************************************************/
+    function renderMenu1Perangkat(ws) {
+      const p = APP_STATE.profile;
+      ws.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+            <h2 class="font-display font-extrabold text-lg">📘 Generator Perangkat Pembelajaran</h2>
+            <div>
+              <label class="block text-xs font-bold mb-1">Jenis Perangkat</label>
+              <select id="m1-jenis" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="Modul Ajar Lengkap">Modul Ajar (Kurikulum Merdeka)</option>
+                <option value="Alur Tujuan Pembelajaran (ATP)">Alur Tujuan Pembelajaran (ATP)</option>
+                <option value="Tujuan Pembelajaran (TP)">Tujuan Pembelajaran (TP)</option>
+                <option value="Perencanaan Pembelajaran Mendalam (Deep Learning)">Perencanaan Pembelajaran Mendalam (Deep Learning)</option>
+                <option value="Rencana Pelaksanaan Pembelajaran (RPP)">RPP / Rencana Pembelajaran</option>
+                <option value="Program Tahunan (Prota)">Program Tahunan (Prota)</option>
+                <option value="Program Semester (Promes)">Program Semester (Promes)</option>
+                <option value="Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)">Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)</option>
+                <option value="Rancangan Diferensiasi Pembelajaran">Diferensiasi Pembelajaran (Konten, Proses, Produk)</option>
+                <option value="Instrumen Refleksi Guru">Refleksi Guru</option>
+                <option value="Lembar Refleksi Peserta Didik">Refleksi Peserta Didik</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Jenjang</label>
+                <input type="text" id="m1-jenjang" value="${escapeHtml(p.jenjang)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Kelas / Fase</label>
+                <input type="text" id="m1-kelas" value="${escapeHtml(p.kelas)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Mata Pelajaran</label>
+                <input type="text" id="m1-mapel" value="${escapeHtml(p.mapel)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Semester</label>
+                <select id="m1-semester" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                  <option value="Semester 1 (Ganjil)">Semester 1 (Ganjil)</option>
+                  <option value="Semester 2 (Genap)">Semester 2 (Genap)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Topik / Materi Pokok <span class="text-rose-500">*</span></label>
+              <input type="text" id="m1-materi" value="Harmoni dalam Ekosistem dan Rantai Makanan" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Alokasi Waktu</label>
+                <input type="text" id="m1-waktu" value="2 x 35 Menit (1 Pertemuan)" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Kurikulum</label>
+                <input type="text" id="m1-kurikulum" value="Kurikulum Merdeka (Deep Learning)" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Model Pembelajaran</label>
+              <select id="m1-model" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="Problem-Based Learning (PBL)">Problem-Based Learning (PBL)</option>
+                <option value="Project-Based Learning (PjBL)">Project-Based Learning (PjBL)</option>
+                <option value="Discovery / Inquiry Learning">Discovery / Inquiry Learning</option>
+                <option value="Pembelajaran Berdiferensiasi & Kooperatif">Pembelajaran Berdiferensiasi &amp; Kooperatif</option>
+                <option value="Teaching Factory (Vokasi SMK)">Teaching Factory (Vokasi SMK)</option>
+                <option value="Bermain Bermakna & Eksplorasi (PAUD/SD Awal)">Bermain Bermakna &amp; Eksplorasi</option>
+              </select>
+            </div>
+            <button type="button" onclick="generateMenu1()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-navy-900 to-turquoise-700 hover:opacity-95 text-white font-display font-bold text-sm shadow-lg transition">
+              ✨ Susun Perangkat Pembelajaran
+            </button>
+          </div>
+
+          <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 min-h-[420px]">
+            <div id="m1-output-wrap">
+              <div class="h-80 flex flex-col items-center justify-center text-center text-slate-400 p-6">
+                <span class="text-4xl mb-3">📘</span>
+                <p class="font-semibold text-slate-600 dark:text-slate-300">Siap Menyusun Perangkat Pembelajaran</p>
+                <p class="text-xs mt-1 max-w-md">Pilih jenis perangkat (Modul Ajar, ATP, Deep Learning, RPP, Prota, Promes, KKTP) lalu tekan tombol <strong>Susun Perangkat Pembelajaran</strong>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function generateMenu1() {
+      const jenis = document.getElementById('m1-jenis').value;
+      const jenjang = document.getElementById('m1-jenjang').value;
+      const kelas = document.getElementById('m1-kelas').value;
+      const mapel = document.getElementById('m1-mapel').value;
+      const semester = document.getElementById('m1-semester').value;
+      const materi = document.getElementById('m1-materi').value.trim() || 'Materi Pembelajaran';
+      const waktu = document.getElementById('m1-waktu').value;
+      const kurikulum = document.getElementById('m1-kurikulum').value;
+      const model = document.getElementById('m1-model').value;
+      const p = APP_STATE.profile;
+      const rule = JENJANG_RULES[jenjang] || JENJANG_RULES['SD/MI'];
+
+      const wrap = document.getElementById('m1-output-wrap');
+      wrap.innerHTML = `<div class="py-20 text-center text-sm font-semibold text-turquoise-600 animate-pulse">⏳ AI sedang menyusun ${escapeHtml(jenis)} sesuai karakteristik jenjang ${escapeHtml(jenjang)}...</div>`;
+
+      const html = await callAiService(
+        `Susun ${jenis} lengkap untuk jenjang ${jenjang} kelas ${kelas}, mapel ${mapel}, semester ${semester}, materi "${materi}", alokasi waktu ${waktu}, kurikulum ${kurikulum}, model ${model}. Penyusun: ${p.nama} (${p.sekolah}). Pendekatan: ${rule.pendekatan}`,
+        () => `
+          <h1>${escapeHtml(jenis.toUpperCase())}</h1>
+          <table>
+            <tr><th style="width:28%;">Satuan Pendidikan</th><td>${escapeHtml(p.sekolah)}</td><th style="width:22%;">Jenjang / Kelas</th><td>${escapeHtml(jenjang)} / ${escapeHtml(kelas)}</td></tr>
+            <tr><th>Mata Pelajaran</th><td>${escapeHtml(mapel)}</td><th>Semester / Tahun</th><td>${escapeHtml(semester)} / ${escapeHtml(p.tahun)}</td></tr>
+            <tr><th>Materi Pokok</th><td>${escapeHtml(materi)}</td><th>Alokasi Waktu</th><td>${escapeHtml(waktu)}</td></tr>
+            <tr><th>Kurikulum &amp; Model</th><td>${escapeHtml(kurikulum)} — ${escapeHtml(model)}</td><th>Penyusun</th><td>${escapeHtml(p.nama)}</td></tr>
+          </table>
+
+          <h2>A. Identifikasi &amp; Profil Lulusan (8 Dimensi Pembelajaran Mendalam)</h2>
+          <ul>
+            <li><strong>Karakteristik Peserta Didik (${escapeHtml(jenjang)}):</strong> ${escapeHtml(rule.pendekatan)}</li>
+            <li><strong>Dimensi Profil Lulusan:</strong> Penalaran Kritis, Kreativitas, Kolaborasi, Komunikasi, dan Kemandirian.</li>
+          </ul>
+
+          <h2>B. Capaian &amp; Tujuan Pembelajaran (TP)</h2>
+          <ol>
+            <li>Peserta didik mampu menjelaskan konsep dasar <strong>${escapeHtml(materi)}</strong> dengan bahasa yang runtut dan tepat sesuai tingkat perkembangan (${escapeHtml(rule.kognitif)}).</li>
+            <li>Peserta didik mampu menganalisis keterkaitan konsep <strong>${escapeHtml(materi)}</strong> dalam kehidupan sehari-hari melalui kegiatan diskusi dan eksplorasi.</li>
+            <li>Peserta didik mampu menyajikan hasil karya/pemecahan masalah terkait <strong>${escapeHtml(materi)}</strong> secara kolaboratif dan penuh percaya diri.</li>
+          </ol>
+
+          <h2>C. Praktik Pedagogis &amp; Langkah Pembelajaran (${escapeHtml(model)})</h2>
+          <table>
+            <tr><th style="width:20%;">Tahap</th><th>Deskripsi Kegiatan Guru &amp; Peserta Didik (Berkesadaran, Bermakna, Menggembirakan)</th><th style="width:15%;">Waktu</th></tr>
+            <tr>
+              <td><strong>1. Pendahuluan</strong><br><em>(Mindful)</em></td>
+              <td>
+                • Guru membuka kelas dengan salam, doa, cek kehadiran, dan <em>ice breaking</em> singkat.<br>
+                • <strong>Pertanyaan Pemantik:</strong> Guru menampilkan fenomena nyata terkait <em>${escapeHtml(materi)}</em> dan bertanya: <em>"Apa yang terjadi di sekitar kita jika hal ini berubah?"</em><br>
+                • Menyampaikan tujuan pembelajaran dan manfaatnya dalam kehidupan nyata.
+              </td>
+              <td>15% JP</td>
+            </tr>
+            <tr>
+              <td><strong>2. Kegiatan Inti</strong><br><em>(Meaningful)</em></td>
+              <td>
+                • <strong>Orientasi Masalah &amp; Eksplorasi:</strong> Peserta didik mengamati bahan ajar/media visual tentang <em>${escapeHtml(materi)}</em>.<br>
+                • <strong>Diferensiasi Proses:</strong> Kelompok visual membuat bagan/peta konsep, kelompok kinestetik melakukan simulasi/praktik langsung, dan kelompok auditori berdiskusi studi kasus.<br>
+                • <strong>Elaborasi &amp; Presentasi:</strong> Setiap kelompok mempresentasikan temuan dan saling memberikan umpan balik konstruktif.
+              </td>
+              <td>70% JP</td>
+            </tr>
+            <tr>
+              <td><strong>3. Penutup</strong><br><em>(Joyful)</em></td>
+              <td>
+                • Peserta didik bersama guru menyimpulkan poin-poin kunci <em>${escapeHtml(materi)}</em>.<br>
+                • <strong>Refleksi Singkat:</strong> Murid menuliskan 1 hal baru yang dipahami dan 1 hal yang masih ingin ditanyakan.<br>
+                • Tindak lanjut dan doa penutup.
+              </td>
+              <td>15% JP</td>
+            </tr>
+          </table>
+
+          <h2>D. Asesmen &amp; Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)</h2>
+          <table>
+            <tr><th>Aspek Penilaian</th><th>Perlu Bimbingan (0–65)</th><th>Cakap (66–85)</th><th>Sangat Mahir (86–100)</th></tr>
+            <tr><td>Pemahaman Konsep ${escapeHtml(materi)}</td><td>Mampu menyebutkan istilah dasar dengan bantuan guru.</td><td>Mampu menjelaskan konsep utama secara mandiri dengan contoh tepat.</td><td>Mampu menganalisis hubungan antar konsep dan memecahkan kasus baru.</td></tr>
+            <tr><td>Kolaborasi &amp; Komunikasi</td><td>Berpartisipasi saat diarahkan kelompok.</td><td>Aktif berdiskusi dan menyampaikan pendapat dengan santun.</td><td>Memimpin diskusi, menghargai ide teman, dan mempresentasikan dengan sistematis.</td></tr>
+          </table>
+        `
+      );
+
+      const docTitle = `${jenis} - ${materi}`;
+      wrap.innerHTML = renderResultToolbar('m1-doc-content', docTitle, 'Perangkat Pembelajaran') +
+        `<div id="m1-doc-content" contenteditable="true" class="edu-doc outline-none">${html}</div>`;
+      addRecentHistory('Perangkat Pembelajaran', docTitle);
+    }
+
+    /*************************************************************************
+     * 8. MENU 2: BANK SOAL DAN ASESMEN
+     *************************************************************************/
+    function renderMenu2BankSoal(ws) {
+      const p = APP_STATE.profile;
+      ws.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+            <h2 class="font-display font-extrabold text-lg">📝 Generator Bank Soal &amp; Asesmen</h2>
+            <div>
+              <label class="block text-xs font-bold mb-1">Jenis Soal / Instrumen Asesmen</label>
+              <select id="m2-jenis" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="Pilihan Ganda">Pilihan Ganda</option>
+                <option value="Pilihan Ganda Kompleks (AKM)">Pilihan Ganda Kompleks</option>
+                <option value="Benar atau Salah">Benar atau Salah</option>
+                <option value="Menjodohkan">Menjodohkan</option>
+                <option value="Isian Singkat">Isian Singkat</option>
+                <option value="Uraian / Esai">Uraian</option>
+                <option value="Paket Soal HOTS (Penalaran Tinggi)">Soal HOTS</option>
+                <option value="Asesmen Diagnostik Awal">Asesmen Diagnostik</option>
+                <option value="Asesmen Formatif">Asesmen Formatif</option>
+                <option value="Asesmen Sumatif + Kisi-Kisi & Rubrik">Asesmen Sumatif + Kisi-Kisi &amp; Rubrik</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Topik / Materi Uji</label>
+              <input type="text" id="m2-materi" value="Rantai Makanan dan Keseimbangan Ekosistem" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Jumlah Soal</label>
+                <input type="number" id="m2-jumlah" min="3" max="20" value="5" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Tingkat Kesulitan</label>
+                <select id="m2-kesulitan" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                  <option value="Mudah (Dasar)">Mudah</option>
+                  <option value="Sedang (Proporsional)" selected>Sedang</option>
+                  <option value="Sulit (Tantangan / HOTS)">Sulit / HOTS</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Level Kognitif</label>
+                <select id="m2-kognitif" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                  <option value="C1-C2 (Mengingat & Memahami)">C1–C2 (Pemahaman)</option>
+                  <option value="C3 (Menerapkan)">C3 (Aplikasi)</option>
+                  <option value="C4-C6 (HOTS: Analisis, Evaluasi, Kreasi)" selected>C4–C6 (HOTS)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Bobot Total Nilai</label>
+                <input type="number" id="m2-bobot" value="100" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+            </div>
+            <button type="button" onclick="generateMenu2()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-turquoise-600 to-navy-900 hover:opacity-95 text-white font-display font-bold text-sm shadow-lg transition">
+              ⚡ Buat Soal, Kisi-Kisi &amp; Rubrik
+            </button>
+          </div>
+
+          <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 min-h-[420px]">
+            <div id="m2-output-wrap">
+              <div class="h-80 flex flex-col items-center justify-center text-center text-slate-400 p-6">
+                <span class="text-4xl mb-3">📝</span>
+                <p class="font-semibold text-slate-600 dark:text-slate-300">Bank Soal Otomatis Lengkap dengan Kisi-Kisi &amp; Kunci</p>
+                <p class="text-xs mt-1 max-w-md">Atur jenis soal, jumlah soal, level kognitif, dan bobot nilai untuk menghasilkan naskah soal siap cetak.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function generateMenu2() {
+      const jenis = document.getElementById('m2-jenis').value;
+      const materi = document.getElementById('m2-materi').value.trim() || 'Materi Uji';
+      const jumlah = Math.max(2, Math.min(20, parseInt(document.getElementById('m2-jumlah').value || '5', 10)));
+      const kesulitan = document.getElementById('m2-kesulitan').value;
+      const kognitif = document.getElementById('m2-kognitif').value;
+      const bobot = parseInt(document.getElementById('m2-bobot').value || '100', 10);
+      const bobotPerSoal = Math.round((bobot / jumlah) * 10) / 10;
+      const p = APP_STATE.profile;
+
+      const wrap = document.getElementById('m2-output-wrap');
+      wrap.innerHTML = `<div class="py-20 text-center text-sm font-semibold text-turquoise-600 animate-pulse">⏳ Menyusun ${jumlah} butir ${escapeHtml(jenis)} beserta kisi-kisi dan pedoman penskoran...</div>`;
+
+      const html = await callAiService(
+        `Buat ${jumlah} soal ${jenis} jenjang ${p.jenjang} kelas ${p.kelas} mapel ${p.mapel} tentang "${materi}", tingkat kesulitan ${kesulitan}, level kognitif ${kognitif}, total bobot ${bobot}. Sertakan Kisi-Kisi Soal, Naskah Soal, Kunci Jawaban, dan Rubrik Penilaian.`,
+        () => {
+          let kisiRows = '';
+          let soalList = '';
+          let kunciList = '';
+          const jawabanAbjad = ['B', 'C', 'A', 'D', 'B'];
+
+          for (let i = 1; i <= jumlah; i++) {
+            const ans = jawabanAbjad[(i - 1) % jawabanAbjad.length];
+            kisiRows += `<tr><td>${i}</td><td>Menganalisis konsep ${escapeHtml(materi)} (Indikator ${i})</td><td>${escapeHtml(kognitif)}</td><td>${escapeHtml(jenis)}</td><td>${bobotPerSoal}</td></tr>`;
+            if (jenis.includes('Benar atau Salah')) {
+              soalList += `<li><strong>[Skor: ${bobotPerSoal}]</strong> Perhatikan pernyataan berikut terkait <em>${escapeHtml(materi)}</em>: "Perubahan pada satu komponen dalam sistem <em>${escapeHtml(materi)}</em> dapat memengaruhi keseimbangan komponen lainnya secara berantai."<br><strong>Pilihan:</strong> [ ] BENAR &nbsp;&nbsp;&nbsp; [ ] SALAH</li>`;
+              kunciList += `<li>Nomor ${i}: <strong>BENAR</strong> (Karena komponen dalam sistem saling berinteraksi).</li>`;
+            } else if (jenis.includes('Uraian') || jenis.includes('Isian')) {
+              soalList += `<li><strong>[Skor: ${bobotPerSoal}]</strong> Jelaskan bagaimana penerapan prinsip <em>${escapeHtml(materi)}</em> dalam memecahkan permasalahan nyata di lingkungan sekitar kita (Kasus ke-${i})!</li>`;
+              kunciList += `<li>Nomor ${i}: Peserta didik menjelaskan konsep inti ${escapeHtml(materi)}, memberikan 1 contoh konkret, dan menyimpulkan dampaknya secara logis.</li>`;
+            } else {
+              soalList += `
+                <li>
+                  <strong>[Skor: ${bobotPerSoal}]</strong> Perhatikan studi kasus ke-${i} mengenai <em>${escapeHtml(materi)}</em> berikut. Berdasarkan pengamatan data di lapangan, langkah paling tepat yang sesuai dengan prinsip <em>${escapeHtml(materi)}</em> adalah ....<br>
+                  A. Mengabaikan perubahan faktor lingkungan yang terjadi secara bertahap<br>
+                  B. Menganalisis hubungan sebab-akibat antar komponen utama secara sistematis<br>
+                  C. Mengambil kesimpulan tanpa membandingkan data hasil pengamatan<br>
+                  D. Memisahkan seluruh komponen agar tidak saling berinteraksi
+                </li>`;
+              kunciList += `<li>Nomor ${i}: <strong>${ans}</strong> — Analisis konsep <em>${escapeHtml(materi)}</em> sesuai indikator ke-${i}.</li>`;
+            }
+          }
+
+          return `
+            <h1>NASKAH ASESMEN &amp; BANK SOAL (${escapeHtml(jenis.toUpperCase())})</h1>
+            <table>
+              <tr><th>Satuan Pendidikan</th><td>${escapeHtml(p.sekolah)}</td><th>Jenjang / Kelas</th><td>${escapeHtml(p.jenjang)} / ${escapeHtml(p.kelas)}</td></tr>
+              <tr><th>Mata Pelajaran</th><td>${escapeHtml(p.mapel)}</td><th>Materi Pokok</th><td>${escapeHtml(materi)}</td></tr>
+              <tr><th>Tingkat Kesulitan</th><td>${escapeHtml(kesulitan)}</td><th>Total Bobot Nilai</th><td>${bobot} Poin</td></tr>
+            </table>
+
+            <h2>1. Kisi-Kisi Penulisan Soal</h2>
+            <table>
+              <tr><th>No</th><th>Indikator Pencapaian Kompetensi</th><th>Level Kognitif</th><th>Bentuk Soal</th><th>Bobot</th></tr>
+              ${kisiRows}
+            </table>
+
+            <h2>2. Butir Soal (${escapeHtml(jenis)})</h2>
+            <ol>${soalList}</ol>
+
+            <h2>3. Kunci Jawaban &amp; Rubrik Penilaian</h2>
+            <ol>${kunciList}</ol>
+            <p><strong>Rumus Nilai Akhir:</strong> <code>Nilai = (Jumlah Skor Perolehan / ${bobot}) × 100</code></p>
+          `;
+        }
+      );
+
+      const docTitle = `Bank Soal ${jenis} - ${materi}`;
+      wrap.innerHTML = renderResultToolbar('m2-doc-content', docTitle, 'Bank Soal & Asesmen') +
+        `<div id="m2-doc-content" contenteditable="true" class="edu-doc outline-none">${html}</div>`;
+      addRecentHistory('Bank Soal', docTitle);
+    }
+
+    /*************************************************************************
+     * 9. MENU 3: LKPD GENERATOR
+     *************************************************************************/
+    function renderMenu3Lkpd(ws) {
+      const p = APP_STATE.profile;
+      ws.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+            <h2 class="font-display font-extrabold text-lg">📄 LKPD Generator Otomatis</h2>
+            <div>
+              <label class="block text-xs font-bold mb-1">Judul Kegiatan LKPD</label>
+              <input type="text" id="m3-judul" value="Menyelidiki Peran Makhluk Hidup dalam Rantai Makanan" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Jenjang</label>
+                <input type="text" id="m3-jenjang" value="${escapeHtml(p.jenjang)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Kelas</label>
+                <input type="text" id="m3-kelas" value="${escapeHtml(p.kelas)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Materi Pokok</label>
+              <input type="text" id="m3-materi" value="Produsen, Konsumen, dan Pengurai dalam Ekosistem" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Mode Desain Cetak</label>
+              <select id="m3-theme" onchange="toggleLkpdBwPreview()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="color">🎨 Desain Berwarna (Layar / Cetak Warna)</option>
+                <option value="bw">🖨️ Desain Hitam Putih (Hemat Tinta / Siap Fotokopi)</option>
+              </select>
+            </div>
+            <button type="button" onclick="generateMenu3()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-navy-900 hover:opacity-95 text-white font-display font-bold text-sm shadow-lg transition">
+              ✨ Buat LKPD Lengkap
+            </button>
+          </div>
+
+          <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 min-h-[420px]">
+            <div id="m3-output-wrap">
+              <div class="h-80 flex flex-col items-center justify-center text-center text-slate-400 p-6">
+                <span class="text-4xl mb-3">📄</span>
+                <p class="font-semibold text-slate-600 dark:text-slate-300">Lembar Kerja Peserta Didik (LKPD) Terstruktur</p>
+                <p class="text-xs mt-1 max-w-md">Lengkap dengan identitas siswa, materi pengantar, aktivitas individu &amp; kelompok, lembar pengamatan, refleksi, serta rubrik.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleLkpdBwPreview() {
+      const mode = document.getElementById('m3-theme')?.value;
+      const docEl = document.getElementById('m3-doc-content');
+      if (!docEl) return;
+      if (mode === 'bw') docEl.classList.add('lkpd-bw', 'p-4', 'rounded-xl');
+      else docEl.classList.remove('lkpd-bw', 'p-4', 'rounded-xl');
+    }
+
+    async function generateMenu3() {
+      const judul = document.getElementById('m3-judul').value.trim() || 'Kegiatan Pembelajaran';
+      const jenjang = document.getElementById('m3-jenjang').value;
+      const kelas = document.getElementById('m3-kelas').value;
+      const materi = document.getElementById('m3-materi').value;
+      const p = APP_STATE.profile;
+
+      const wrap = document.getElementById('m3-output-wrap');
+      wrap.innerHTML = `<div class="py-20 text-center text-sm font-semibold text-emerald-600 animate-pulse">⏳ Menyusun LKPD lengkap untuk jenjang ${escapeHtml(jenjang)}...</div>`;
+
+      const html = await callAiService(
+        `Buat LKPD lengkap berjudul "${judul}" untuk jenjang ${jenjang} kelas ${kelas} mapel ${p.mapel}, materi "${materi}".`,
+        () => `
+          <div style="border: 2px solid #0B1B36; border-radius: 12px; padding: 14px; margin-bottom: 14px; background: #F0FDFA;">
+            <h1 style="margin-top:0; border:none;">LEMBAR KERJA PESERTA DIDIK (LKPD)</h1>
+            <p style="margin:0;"><strong>Judul Kegiatan:</strong> ${escapeHtml(judul)}</p>
+            <p style="margin:4px 0 0;"><strong>Satuan Pendidikan:</strong> ${escapeHtml(p.sekolah)} &bull; <strong>Jenjang/Kelas:</strong> ${escapeHtml(jenjang)} / ${escapeHtml(kelas)} &bull; <strong>Mapel:</strong> ${escapeHtml(p.mapel)}</p>
+          </div>
+
+          <table>
+            <tr><th style="width:25%;">Nama Peserta Didik</th><td style="width:25%;">....................................</td><th style="width:20%;">Kelompok</th><td>....................</td></tr>
+            <tr><th>No. Absen</th><td>....................................</td><th>Tanggal</th><td>....................</td></tr>
+          </table>
+
+          <h2>1. Tujuan Pembelajaran</h2>
+          <p>Melalui kegiatan eksplorasi dan diskusi kelompok pada LKPD ini, peserta didik mampu mengidentifikasi, menganalisis, dan menyimpulkan konsep <strong>${escapeHtml(materi)}</strong> secara tepat dan kolaboratif.</p>
+
+          <h2>2. Petunjuk Pengerjaan</h2>
+          <ol>
+            <li>Berdoalah sebelum memulai kegiatan belajar.</li>
+            <li>Bacalah materi pengantar dan setiap langkah kerja dengan cermat.</li>
+            <li>Kerjakan aktivitas individu terlebih dahulu, kemudian diskusikan hasil temuan bersama kelompokmu.</li>
+            <li>Tuliskan jawaban dengan rapi dan tanyakan kepada guru apabila menemui kesulitan.</li>
+          </ol>
+
+          <h2>3. Materi Pengantar Singkat</h2>
+          <p>Dalam kajian <strong>${escapeHtml(materi)}</strong>, setiap unsur memiliki peran penting yang saling terhubung. Memahami fungsi masing-masing bagian membantu kita menjaga keseimbangan dan menerapkan pengetahuan ini dalam kehidupan sehari-hari.</p>
+
+          <h2>4. Aktivitas Individu (Eksplorasi Mandiri)</h2>
+          <p>Amati lingkungan sekitar sekolah atau gambar yang disajikan guru terkait <strong>${escapeHtml(materi)}</strong>, kemudian tuliskan 3 temuan utamamu:</p>
+          <ol>
+            <li>Temuan 1: ............................................................................................................</li>
+            <li>Temuan 2: ............................................................................................................</li>
+            <li>Temuan 3: ............................................................................................................</li>
+          </ol>
+
+          <h2>5. Aktivitas Kelompok &amp; Lembar Pengamatan</h2>
+          <table>
+            <tr><th>No</th><th>Objek / Komponen yang Diamati</th><th>Peran / Fungsi Utama</th><th>Dampak Jika Komponen Hilang</th></tr>
+            <tr><td>1</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+            <tr><td>2</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+            <tr><td>3</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+          </table>
+
+          <h2>6. Pertanyaan Diskusi &amp; Kesimpulan</h2>
+          <p><strong>Pertanyaan Diskusi:</strong> Mengapa keterkaitan antar komponen dalam <em>${escapeHtml(materi)}</em> harus dijaga keseimbangannya?</p>
+          <p>Jawaban: ........................................................................................................................................</p>
+          <p><strong>Kesimpulan Kelompok:</strong> ....................................................................................................................</p>
+
+          <h2>7. Refleksi Peserta Didik &amp; Rubrik Penilaian Guru</h2>
+          <p><strong>Refleksi Diri:</strong> Bagian paling menarik dari kegiatan hari ini adalah .....................................................</p>
+          <table>
+            <tr><th>Kriteria</th><th>Skor 4 (Sangat Baik)</th><th>Skor 3 (Baik)</th><th>Skor 2 (Cukup)</th></tr>
+            <tr><td>Ketepatan Data Pengamatan</td><td>Seluruh data lengkap, akurat, dan logis.</td><td>Sebagian besar data tepat dan lengkap.</td><td>Data masih perlu bimbingan guru.</td></tr>
+            <tr><td>Kerja Sama Kelompok</td><td>Aktif berkontribusi dan menghargai teman.</td><td>Ikut serta dalam diskusi kelompok.</td><td>Kurang aktif berpartisipasi.</td></tr>
+          </table>
+        `
+      );
+
+      const docTitle = `LKPD - ${judul}`;
+      wrap.innerHTML = renderResultToolbar('m3-doc-content', docTitle, 'LKPD') +
+        `<div id="m3-doc-content" contenteditable="true" class="edu-doc outline-none">${html}</div>`;
+      toggleLkpdBwPreview();
+      addRecentHistory('LKPD', docTitle);
+    }
+
+    /*************************************************************************
+     * 10. MENU 4: GAME EDUKASI (10 PLAYABLE INTERACTIVE GAMES)
+     *************************************************************************/
+    const GAME_STATE = {
+      type: 'quiz',
+      materi: 'Ekosistem & Rantai Makanan',
+      questions: [],
+      currentIdx: 0,
+      score: 0,
+      lives: 3,
+      timerSeconds: 0,
+      timerInterval: null,
+      soundEnabled: true,
+      selectedLeft: null,
+      matchedPairs: []
+    };
+
+    function playGameTone(isCorrect) {
+      if (!GAME_STATE.soundEnabled) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        if (isCorrect) {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.35);
+        } else {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(220, ctx.currentTime);
+          osc.frequency.setValueAtTime(165, ctx.currentTime + 0.14);
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.35);
+        }
+      } catch (e) {}
+    }
+
+    function renderMenu4GameEdukasi(ws) {
+      if (GAME_STATE.timerInterval) clearInterval(GAME_STATE.timerInterval);
+      const p = APP_STATE.profile;
+      ws.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+            <h2 class="font-display font-extrabold text-lg">🎮 Generator Game Edukasi</h2>
+            <div>
+              <label class="block text-xs font-bold mb-1">Pilih Jenis Permainan (10 Mode)</label>
+              <select id="m4-type" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-medium">
+                <option value="quiz">1. Kuis Pilihan Ganda</option>
+                <option value="tebak-gambar">2. Tebak Gambar &amp; Simbol</option>
+                <option value="true-false">3. Benar atau Salah</option>
+                <option value="puzzle">4. Puzzle Urutan Konsep</option>
+                <option value="susun-kata">5. Susun Kata (Scramble)</option>
+                <option value="matching">6. Mencocokkan Pasangan</option>
+                <option value="wheel">7. Roda Keberuntungan</option>
+                <option value="riddle">8. Teka-Teki Edukasi</option>
+                <option value="adventure">9. Petualangan Edukasi</option>
+                <option value="speed">10. Kuis Cepat (Speed Quiz)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Materi Permainan</label>
+              <input type="text" id="m4-materi" value="Ekosistem & Rantai Makanan" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Jenjang &amp; Kelas</label>
+                <input type="text" id="m4-jenjang" value="${escapeHtml(p.jenjang)} (${escapeHtml(p.kelas)})" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Jumlah Tantangan</label>
+                <select id="m4-count" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                  <option value="4">4 Soal</option>
+                  <option value="5" selected>5 Soal</option>
+                  <option value="6">6 Soal</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <label class="inline-flex items-center gap-2 text-xs font-semibold cursor-pointer">
+                <input type="checkbox" id="m4-sound" checked onchange="GAME_STATE.soundEnabled = this.checked" class="rounded text-turquoise-600" />
+                <span>🔊 Efek Suara Benar/Salah</span>
+              </label>
+            </div>
+            <button type="button" onclick="startEducationalGame()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:opacity-95 text-white font-display font-extrabold text-sm shadow-lg transition">
+              🚀 Mulai Mainkan Game!
+            </button>
+          </div>
+
+          <div class="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 min-h-[440px] flex flex-col">
+            <div id="m4-arena" class="flex-1 flex flex-col justify-center">
+              <div class="text-center p-6 space-y-3">
+                <div class="text-5xl">🎯</div>
+                <h3 class="font-display font-extrabold text-xl text-navy-900 dark:text-white">Arena Game Edukasi Interaktif</h3>
+                <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">Pilih salah satu dari <strong>10 jenis permainan</strong> di panel kiri (termasuk Roda Keberuntungan, Susun Kata, Puzzle, Tebak Gambar, hingga Petualangan Edukasi) lalu klik <strong>Mulai Mainkan Game!</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function buildQuestionsForTopic(materi, count) {
+      const bank = [
+        {
+          emoji: '🌱☀️',
+          word: 'PRODUSEN',
+          clue: 'Organisme yang mampu membuat makanannya sendiri melalui proses fotosintesis.',
+          q: `Dalam materi ${materi}, komponen utama yang berperan menghasilkan energi/sumber awal bagi komponen lainnya disebut...`,
+          options: ['Produsen', 'Pengurai', 'Konsumen Puncak', 'Parasit'],
+          answer: 0,
+          tf: true,
+          tfStatement: `Pada materi ${materi}, produsen berperan penting sebagai penyedia sumber energi awal.`,
+          pairLeft: 'Produsen',
+          pairRight: 'Penghasil makanan mandiri'
+        },
+        {
+          emoji: '🐇🌿',
+          word: 'KONSUMEN',
+          clue: 'Makhluk hidup yang memperoleh energi dengan memakan organisme lain.',
+          q: `Organisme yang bergantung pada produsen atau organisme lain dalam kajian ${materi} dinamakan...`,
+          options: ['Dekomposer', 'Konsumen', 'Abiotik', 'Mineral'],
+          answer: 1,
+          tf: false,
+          tfStatement: `Konsumen tingkat I selalu memakan daging hewan karnivora besar.`,
+          pairLeft: 'Konsumen I',
+          pairRight: 'Pemakan tumbuhan (Herbivora)'
+        },
+        {
+          emoji: '🍄🦠',
+          word: 'PENGURAI',
+          clue: 'Bakteri dan jamur yang menguraikan sisa makhluk hidup menjadi unsur hara tanah.',
+          q: `Peran jamur dan bakteri dalam siklus ${materi} adalah sebagai...`,
+          options: ['Predator utama', 'Penghambat siklus', 'Pengurai (Dekomposer)', 'Penyerap cahaya'],
+          answer: 2,
+          tf: true,
+          tfStatement: `Pengurai membantu mengembalikan nutrisi ke tanah agar subur kembali.`,
+          pairLeft: 'Dekomposer',
+          pairRight: 'Pengurai sisa makhluk hidup'
+        },
+        {
+          emoji: '⚖️🌍',
+          word: 'EKOSISTEM',
+          clue: 'Kesatuan interaksi timbal balik antara makhluk hidup dan lingkungannya.',
+          q: `Hubungan saling ketergantungan antara komponen biotik dan abiotik dalam ${materi} membentuk sebuah...`,
+          options: ['Individu tunggal', 'Ekosistem seimbang', 'Isolasi tertutup', 'Kompetisi mutlak'],
+          answer: 1,
+          tf: true,
+          tfStatement: `Keseimbangan sistem akan terganggu jika salah satu populasi punah secara tiba-tiba.`,
+          pairLeft: 'Ekosistem',
+          pairRight: 'Interaksi biotik dan abiotik'
+        },
+        {
+          emoji: '🔗⚡',
+          word: 'ENERGI',
+          clue: 'Daya yang mengalir dari satu tingkat trofik ke tingkat berikutnya.',
+          q: `Aliran utama yang berpindah dari satu komponen ke komponen berikutnya pada ${materi} adalah perpindahan...`,
+          options: ['Batu bara', 'Energi dan nutrisi', 'Logam berat', 'Udara dingin'],
+          answer: 1,
+          tf: false,
+          tfStatement: `Aliran energi dapat berputar mundur dari pengurai kembali ke matahari.`,
+          pairLeft: 'Aliran Energi',
+          pairRight: 'Berpindah searah antar tingkat'
+        },
+        {
+          emoji: '🔬📊',
+          word: 'OBSERVASI',
+          clue: 'Kegiatan mengamati fenomena secara teliti untuk mengumpulkan fakta.',
+          q: `Langkah ilmiah pertama untuk membuktikan hubungan konsep pada ${materi} adalah melakukan...`,
+          options: ['Tebakan acak', 'Observasi & pengamatan', 'Menghafal tanpa paham', 'Mengabaikan data'],
+          answer: 1,
+          tf: true,
+          tfStatement: `Observasi yang teliti membantu kita menarik kesimpulan ilmiah yang akurat.`,
+          pairLeft: 'Observasi',
+          pairRight: 'Pengamatan data langsung'
+        }
+      ];
+      const res = [];
+      for (let i = 0; i < count; i++) {
+        res.push(bank[i % bank.length]);
+      }
+      return res;
+    }
+
+    function startEducationalGame() {
+      const type = document.getElementById('m4-type').value;
+      const materi = document.getElementById('m4-materi').value.trim() || 'Materi Pembelajaran';
+      const count = parseInt(document.getElementById('m4-count').value || '5', 10);
+
+      if (GAME_STATE.timerInterval) clearInterval(GAME_STATE.timerInterval);
+
+      GAME_STATE.type = type;
+      GAME_STATE.materi = materi;
+      GAME_STATE.questions = buildQuestionsForTopic(materi, count);
+      GAME_STATE.currentIdx = 0;
+      GAME_STATE.score = 0;
+      GAME_STATE.lives = 3;
+      GAME_STATE.timerSeconds = type === 'speed' ? count * 12 : 0;
+      GAME_STATE.selectedLeft = null;
+      GAME_STATE.matchedPairs = [];
+
+      GAME_STATE.timerInterval = setInterval(() => {
+        if (GAME_STATE.type === 'speed') {
+          GAME_STATE.timerSeconds--;
+          const tEl = document.getElementById('game-timer-val');
+          if (tEl) tEl.textContent = GAME_STATE.timerSeconds + ' dtk';
+          if (GAME_STATE.timerSeconds <= 0) {
+            clearInterval(GAME_STATE.timerInterval);
+            renderGameOverScreen('Waktu Habis!');
+          }
+        } else {
+          GAME_STATE.timerSeconds++;
+          const tEl = document.getElementById('game-timer-val');
+          if (tEl) tEl.textContent = GAME_STATE.timerSeconds + ' dtk';
+        }
+      }, 1000);
+
+      renderCurrentGameStep();
+    }
+
+    function renderGameHeader() {
+      const total = GAME_STATE.questions.length;
+      const step = Math.min(GAME_STATE.currentIdx + 1, total);
+      return `
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-200 dark:border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full bg-navy-900 text-gold-400 text-xs font-extrabold">Soal ${step}/${total}</span>
+            ${GAME_STATE.type === 'adventure' ? `<span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-700 text-xs font-bold">❤️ Nyawa: ${GAME_STATE.lives}</span>` : ''}
+          </div>
+          <div class="flex items-center gap-3 text-xs font-bold">
+            <span class="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300">Skor: ${GAME_STATE.score}</span>
+            <span class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800">⏱️ <span id="game-timer-val">${GAME_STATE.timerSeconds} dtk</span></span>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCurrentGameStep() {
+      const arena = document.getElementById('m4-arena');
+      if (!arena) return;
+      const idx = GAME_STATE.currentIdx;
+      const total = GAME_STATE.questions.length;
+
+      if (idx >= total) {
+        if (GAME_STATE.timerInterval) clearInterval(GAME_STATE.timerInterval);
+        renderGameOverScreen('Permainan Selesai!');
+        return;
+      }
+
+      const item = GAME_STATE.questions[idx];
+      const t = GAME_STATE.type;
+
+      if (t === 'matching') {
+        renderMatchingGame(arena);
+        return;
+      }
+
+      if (t === 'puzzle') {
+        renderPuzzleOrderGame(arena);
+        return;
+      }
+
+      if (t === 'wheel') {
+        arena.innerHTML = `
+          ${renderGameHeader()}
+          <div class="text-center space-y-4 py-2">
+            <h4 class="font-display font-bold text-base">🎡 Putar Roda Keberuntungan untuk Membuka Tantangan!</h4>
+            <div class="relative w-44 h-44 mx-auto flex items-center justify-center">
+              <div id="spin-wheel-disc" class="w-40 h-40 rounded-full border-8 border-navy-900 shadow-xl flex items-center justify-center transition-transform duration-1000 ease-out" style="background: conic-gradient(#0D9488 0deg 90deg, #F59E0B 90deg 180deg, #1D3B68 180deg 270deg, #10B981 270deg 360deg);">
+                <div class="w-12 h-12 rounded-full bg-white text-navy-950 font-extrabold text-xs flex items-center justify-center shadow">SPIN</div>
+              </div>
+              <div class="absolute -top-1 text-rose-600 text-xl font-black">▼</div>
+            </div>
+            <button type="button" id="btn-spin-wheel" onclick="spinWheelStep()" class="px-6 py-2.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 font-extrabold text-sm shadow">
+              🎯 Putar Roda Sekarang
+            </button>
+            <div id="wheel-question-box" class="hidden text-left pt-3 border-t border-slate-200 dark:border-slate-800 space-y-3">
+              <p class="font-semibold text-sm">${escapeHtml(item.q)}</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                ${item.options.map((opt, oIdx) => `
+                  <button type="button" onclick="answerMultipleChoice(${oIdx})" class="p-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:border-turquoise-500 hover:bg-turquoise-50 dark:hover:bg-turquoise-900/30 text-left text-xs sm:text-sm font-medium transition">
+                    <strong>${String.fromCharCode(65 + oIdx)}.</strong> ${escapeHtml(opt)}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (t === 'susun-kata') {
+        const letters = item.word.split('').sort(() => Math.random() - 0.5);
+        arena.innerHTML = `
+          ${renderGameHeader()}
+          <div class="space-y-4 text-center">
+            <span class="inline-block px-3 py-1 rounded-full bg-turquoise-100 text-turquoise-800 text-xs font-bold">🔤 Susun Kata Edukasi</span>
+            <p class="text-sm font-medium text-slate-600 dark:text-slate-300">Petunjuk: <em>${escapeHtml(item.clue)}</em></p>
+            <div class="flex flex-wrap justify-center gap-2 my-3">
+              ${letters.map(ch => `<button type="button" onclick="appendScrambleLetter('${ch}')" class="w-11 h-11 rounded-xl bg-navy-900 text-gold-400 font-display font-extrabold text-lg shadow hover:scale-105 transition">${ch}</button>`).join('')}
+            </div>
+            <div class="max-w-sm mx-auto flex gap-2">
+              <input type="text" id="scramble-answer-input" placeholder="Ketik atau klik huruf..." class="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-center font-display font-extrabold uppercase tracking-widest" />
+              <button type="button" onclick="document.getElementById('scramble-answer-input').value=''" class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-xs font-bold">Hapus</button>
+            </div>
+            <button type="button" onclick="checkScrambleWord()" class="px-6 py-2.5 rounded-xl bg-turquoise-600 text-white font-bold text-sm">Periksa Jawaban</button>
+          </div>
+        `;
+        return;
+      }
+
+      if (t === 'true-false') {
+        arena.innerHTML = `
+          ${renderGameHeader()}
+          <div class="space-y-5 text-center py-4">
+            <span class="inline-block px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-bold">⚖️ Pernyataan Benar atau Salah?</span>
+            <p class="font-display font-bold text-base sm:text-lg max-w-xl mx-auto leading-relaxed">“${escapeHtml(item.tfStatement)}”</p>
+            <div class="flex justify-center gap-4 pt-2">
+              <button type="button" onclick="answerTrueFalse(true)" class="px-8 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-display font-extrabold text-base shadow-lg transition">✅ BENAR</button>
+              <button type="button" onclick="answerTrueFalse(false)" class="px-8 py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-display font-extrabold text-base shadow-lg transition">❌ SALAH</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const badgeMap = {
+        'tebak-gambar': '🖼️ Tebak Gambar & Simbol',
+        'riddle': '🧩 Teka-Teki Edukasi',
+        'adventure': '🗺️ Petualangan Ekspedisi Ilmu',
+        'speed': '⚡ Kuis Cepat Berwaktu',
+        'quiz': '❓ Kuis Pilihan Ganda'
+      };
+      arena.innerHTML = `
+        ${renderGameHeader()}
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold">${badgeMap[t] || 'Kuis Interaktif'}</span>
+          </div>
+          ${t === 'tebak-gambar' ? `<div class="text-5xl text-center py-4 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-200 dark:border-slate-700">${item.emoji}</div>` : ''}
+          ${t === 'riddle' ? `<div class="p-3.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-xs sm:text-sm font-medium">💡 <strong>Petunjuk Teka-Teki:</strong> ${escapeHtml(item.clue)}</div>` : ''}
+          <p class="font-display font-bold text-base sm:text-lg leading-snug">${escapeHtml(item.q)}</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            ${item.options.map((opt, oIdx) => `
+              <button type="button" onclick="answerMultipleChoice(${oIdx})" class="p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-turquoise-500 hover:bg-turquoise-50 dark:hover:bg-turquoise-900/30 text-left text-sm font-semibold transition flex items-center gap-3">
+                <span class="w-7 h-7 rounded-lg bg-navy-900 text-gold-400 flex items-center justify-center text-xs font-extrabold shrink-0">${String.fromCharCode(65 + oIdx)}</span>
+                <span>${escapeHtml(opt)}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function spinWheelStep() {
+      const disc = document.getElementById('spin-wheel-disc');
+      const btn = document.getElementById('btn-spin-wheel');
+      const qBox = document.getElementById('wheel-question-box');
+      if (disc) disc.style.transform = `rotate(${720 + Math.floor(Math.random() * 360)}deg)`;
+      if (btn) btn.disabled = true;
+      setTimeout(() => {
+        if (qBox) qBox.classList.remove('hidden');
+      }, 950);
+    }
+
+    function appendScrambleLetter(ch) {
+      const inp = document.getElementById('scramble-answer-input');
+      if (inp) inp.value = (inp.value + ch).toUpperCase();
+    }
+
+    function checkScrambleWord() {
+      const inp = document.getElementById('scramble-answer-input');
+      const item = GAME_STATE.questions[GAME_STATE.currentIdx];
+      const guess = (inp?.value || '').trim().toUpperCase();
+      const isOk = guess === item.word.toUpperCase();
+      handleGameFeedback(isOk, `Kata yang benar adalah: ${item.word}`);
+    }
+
+    function answerTrueFalse(userBool) {
+      const item = GAME_STATE.questions[GAME_STATE.currentIdx];
+      const isOk = userBool === item.tf;
+      handleGameFeedback(isOk, `Pernyataan tersebut bernilai ${item.tf ? 'BENAR' : 'SALAH'}.`);
+    }
+
+    function answerMultipleChoice(selectedIdx) {
+      const item = GAME_STATE.questions[GAME_STATE.currentIdx];
+      const isOk = selectedIdx === item.answer;
+      handleGameFeedback(isOk, `Jawaban tepat: ${item.options[item.answer]}`);
+    }
+
+    function handleGameFeedback(isCorrect, detailText) {
+      playGameTone(isCorrect);
+      if (isCorrect) {
+        GAME_STATE.score += 20;
+        showToast('Hebat! Jawaban Benar (+20 Poin)', 'success');
+      } else {
+        if (GAME_STATE.type === 'adventure') GAME_STATE.lives--;
+        showToast('Kurang tepat! ' + detailText, 'error');
+        if (GAME_STATE.type === 'adventure' && GAME_STATE.lives <= 0) {
+          if (GAME_STATE.timerInterval) clearInterval(GAME_STATE.timerInterval);
+          renderGameOverScreen('Nyawa Petualangan Habis!');
+          return;
+        }
+      }
+      GAME_STATE.currentIdx++;
+      renderCurrentGameStep();
+    }
+
+    function renderMatchingGame(arena) {
+      const items = GAME_STATE.questions.slice(0, 4);
+      const rightItems = [...items].sort((a, b) => a.pairRight.localeCompare(b.pairRight));
+      arena.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <span class="font-display font-bold text-sm">🔗 Cocokkan Istilah (Kiri) dengan Pasangannya (Kanan)</span>
+            <span class="text-xs font-bold text-emerald-600">Cocok: ${GAME_STATE.matchedPairs.length}/${items.length}</span>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-2">
+              ${items.map(it => {
+                const done = GAME_STATE.matchedPairs.includes(it.pairLeft);
+                const sel = GAME_STATE.selectedLeft === it.pairLeft;
+                return `<button type="button" ${done ? 'disabled' : ''} onclick="selectMatchLeft('${escapeHtml(it.pairLeft)}')" class="w-full p-3 rounded-xl border text-xs font-bold text-left transition ${done ? 'bg-emerald-100 border-emerald-400 text-emerald-800 opacity-60' : sel ? 'bg-navy-900 text-gold-400 border-navy-900' : 'bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700'}">${escapeHtml(it.pairLeft)}</button>`;
+              }).join('')}
+            </div>
+            <div class="space-y-2">
+              ${rightItems.map(it => {
+                const done = GAME_STATE.matchedPairs.includes(it.pairLeft);
+                return `<button type="button" ${done ? 'disabled' : ''} onclick="selectMatchRight('${escapeHtml(it.pairLeft)}')" class="w-full p-3 rounded-xl border text-xs font-medium text-left transition ${done ? 'bg-emerald-100 border-emerald-400 text-emerald-800 opacity-60' : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 hover:border-turquoise-500'}">${escapeHtml(it.pairRight)}</button>`;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function selectMatchLeft(leftKey) {
+      GAME_STATE.selectedLeft = leftKey;
+      renderMatchingGame(document.getElementById('m4-arena'));
+    }
+
+    function selectMatchRight(targetLeftKey) {
+      if (!GAME_STATE.selectedLeft) {
+        showToast('Pilih istilah di kolom kiri terlebih dahulu!', 'info');
+        return;
+      }
+      if (GAME_STATE.selectedLeft === targetLeftKey) {
+        playGameTone(true);
+        GAME_STATE.matchedPairs.push(targetLeftKey);
+        GAME_STATE.score += 25;
+        GAME_STATE.selectedLeft = null;
+        showToast('Pasangan Cocok! (+25 Poin)', 'success');
+        if (GAME_STATE.matchedPairs.length >= Math.min(4, GAME_STATE.questions.length)) {
+          if (GAME_STATE.timerInterval) clearInterval(GAME_STATE.timerInterval);
+          renderGameOverScreen('Semua Pasangan Berhasil Dicocokkan!');
+          return;
+        }
+      } else {
+        playGameTone(false);
+        GAME_STATE.selectedLeft = null;
+        showToast('Belum cocok, coba pasangan lainnya!', 'error');
+      }
+      renderMatchingGame(document.getElementById('m4-arena'));
+    }
+
+    function renderPuzzleOrderGame(arena) {
+      const steps = [
+        '1. Cahaya Matahari diserap oleh Produsen (Tumbuhan Hijau)',
+        '2. Produsen dimakan oleh Konsumen Tingkat I (Herbivora)',
+        '3. Konsumen I dimakan oleh Konsumen Tingkat II (Karnivora)',
+        '4. Sisa organisme diuraikan oleh Dekomposer menjadi hara tanah'
+      ];
+      const shuffled = [...steps].sort(() => Math.random() - 0.5);
+      window._puzzlePicked = [];
+      window._puzzleTarget = steps;
+
+      arena.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <span class="font-display font-bold text-sm">🧩 Susun Urutan Proses (${escapeHtml(GAME_STATE.materi)}) dari Awal ke Akhir</span>
+          </div>
+          <div id="puzzle-slots" class="p-3 rounded-xl bg-turquoise-50 dark:bg-turquoise-950/30 border border-dashed border-turquoise-400 min-h-[90px] space-y-1.5 text-xs font-semibold">
+            <div class="text-slate-400">Klik kartu urutan di bawah secara berurutan (1 s.d. 4)...</div>
+          </div>
+          <div class="space-y-2">
+            ${shuffled.map((st, idx) => `
+              <button type="button" id="puz-btn-${idx}" onclick="pickPuzzleStep(${idx}, '${escapeHtml(st)}')" class="w-full p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:border-navy-900 text-left text-xs font-semibold transition">
+                ${escapeHtml(st.replace(/^\d+\.\s*/, ''))}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function pickPuzzleStep(btnIdx, text) {
+      const btn = document.getElementById('puz-btn-' + btnIdx);
+      if (btn) btn.disabled = true;
+      if (btn) btn.classList.add('opacity-40');
+      window._puzzlePicked.push(text);
+      const slots = document.getElementById('puzzle-slots');
+      if (slots) {
+        slots.innerHTML = window._puzzlePicked.map((s, i) => `<div class="p-2 rounded-lg bg-white dark:bg-slate-800 shadow-xs">Langkah ${i + 1}: ${escapeHtml(s.replace(/^\d+\.\s*/, ''))}</div>`).join('');
+      }
+      if (window._puzzlePicked.length === window._puzzleTarget.length) {
+        const allCorrect = window._puzzlePicked.every((val, i) => val === window._puzzleTarget[i]);
+        playGameTone(allCorrect);
+        if (allCorrect) GAME_STATE.score += 100;
+        if (GAME_STATE.timerInterval) clearInterval(GAME_STATE.timerInterval);
+        renderGameOverScreen(allCorrect ? 'Urutan Puzzle 100% Tepat!' : 'Urutan Belum Tepat, Ayo Coba Lagi!');
+      }
+    }
+
+    function renderGameOverScreen(headline) {
+      const arena = document.getElementById('m4-arena');
+      if (!arena) return;
+      arena.innerHTML = `
+        <div class="text-center py-8 px-4 space-y-4">
+          <div class="text-5xl">🏆</div>
+          <h3 class="font-display font-extrabold text-2xl text-navy-900 dark:text-gold-400">${escapeHtml(headline)}</h3>
+          <div class="inline-flex items-center gap-6 px-6 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800">
+            <div>
+              <div class="text-xs text-slate-500">Skor Akhir</div>
+              <div class="font-display font-extrabold text-3xl text-turquoise-600">${GAME_STATE.score}</div>
+            </div>
+            <div class="h-10 w-px bg-slate-300 dark:bg-slate-700"></div>
+            <div>
+              <div class="text-xs text-slate-500">Waktu</div>
+              <div class="font-display font-extrabold text-xl">${GAME_STATE.timerSeconds} dtk</div>
+            </div>
+          </div>
+          <div>
+            <button type="button" onclick="startEducationalGame()" class="px-7 py-3.5 rounded-2xl bg-navy-900 hover:bg-navy-800 text-white font-display font-bold text-sm shadow-lg transition">
+              🔄 Main Ulang Permainan
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    /*************************************************************************
+     * 11. MENU 5: PRESENTASI AI
+     *************************************************************************/
+    let SLIDE_DECK = [];
+    let CURRENT_SLIDE_IDX = 0;
+
+    function renderMenu5Presentasi(ws) {
+      const p = APP_STATE.profile;
+      ws.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+            <h2 class="font-display font-extrabold text-lg">🖥️ Generator Presentasi AI</h2>
+            <div>
+              <label class="block text-xs font-bold mb-1">Materi Presentasi</label>
+              <input type="text" id="m5-materi" value="Siklus Air dan Pelestarian Sumber Daya Alam" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Jumlah Slide</label>
+                <select id="m5-slides" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                  <option value="5">5 Slide</option>
+                  <option value="6" selected>6 Slide</option>
+                  <option value="8">8 Slide</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Tema Desain</label>
+                <select id="m5-tema" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                  <option value="navy">Navy Profesional</option>
+                  <option value="turquoise">Turquoise Edukatif</option>
+                  <option value="gold">Emas &amp; Hangat</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Gaya Ilustrasi</label>
+              <input type="text" id="m5-gaya" value="Infografis Edukatif Modern & Ramah Siswa ${escapeHtml(p.jenjang)}" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <button type="button" onclick="generateMenu5()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-navy-900 text-white font-display font-bold text-sm shadow-lg transition">
+              🎬 Buat Slide Presentasi
+            </button>
+          </div>
+
+          <div class="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 min-h-[420px]">
+            <div id="m5-output-wrap">
+              <div class="h-80 flex flex-col items-center justify-center text-center text-slate-400 p-6">
+                <span class="text-4xl mb-3">🖥️</span>
+                <p class="font-semibold text-slate-600 dark:text-slate-300">Slide Presentasi Pembelajaran Siap Tayang</p>
+                <p class="text-xs mt-1 max-w-md">Setiap slide dilengkapi poin materi, contoh nyata, saran ilustrasi, pertanyaan interaktif, dan aktivitas siswa.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function generateMenu5() {
+      const materi = document.getElementById('m5-materi').value.trim() || 'Materi Pembelajaran';
+      const count = parseInt(document.getElementById('m5-slides').value || '6', 10);
+      const tema = document.getElementById('m5-tema').value;
+      const gaya = document.getElementById('m5-gaya').value;
+      const p = APP_STATE.profile;
+
+      const templates = [
+        { title: materi, subtitle: `${p.mapel} • ${p.jenjang} (${p.kelas})`, points: [`Disusun oleh: ${p.nama} (${p.sekolah})`, 'Tujuan: Memahami konsep inti, contoh penerapan, dan aksi nyata', 'Siapkan buku catatan dan semangat belajar terbaikmu!'], illustration: `Sampul visual bertema ${gaya} dengan ikon utama ${materi}`, interactive: 'Apa yang pertama kali terlintas di pikiranmu saat mendengar topik ini?' },
+        { title: 'Pertanyaan Pemantik & Fenomena Nyata', subtitle: 'Mengamati Lingkungan Sekitar', points: [`Mengapa ${materi} sangat penting bagi kehidupan manusia?`, 'Perubahan apa yang terjadi jika proses ini terganggu?', 'Mari berbagi pengalaman singkat selama 2 menit!'], illustration: 'Ilustrasi perbandingan dua kondisi lingkungan (seimbang vs terganggu)', interactive: 'Angkat tangan dan ceritakan satu contoh yang pernah kamu lihat!' },
+        { title: 'Konsep Utama & Penjelasan Materi', subtitle: 'Memahami Inti Pembelajaran', points: [`Definisi dan komponen penyusun ${materi}`, 'Mekanisme kerja dan tahapan proses secara berurutan', 'Hubungan sebab-akibat antar bagian dalam sistem'], illustration: `Diagram alur bertahap gaya ${gaya}`, interactive: 'Coba jelaskan kembali dengan bahasamu sendiri kepada teman sebangku!' },
+        { title: 'Contoh Konkret dalam Kehidupan Sehari-Hari', subtitle: 'Belajar Bermakna (Meaningful Learning)', points: ['Penerapan di lingkungan rumah dan sekolah', 'Manfaat langsung bagi masyarakat dan alam sekitar', 'Studi kasus sederhana untuk dianalisis bersama'], illustration: 'Kolase 3 ilustrasi penerapan nyata di sekitar siswa', interactive: 'Dapatkah kamu menemukan contoh lain di sekitar kelas kita?' },
+        { title: 'Aktivitas Kelompok & Tantangan Mini', subtitle: 'Kolaborasi & Kreativitas Siswa', points: ['Bentuk kelompok beranggotakan 3–4 siswa', `Buatlah peta konsep atau poster mini tentang ${materi}`, 'Presentasikan hasil karya kelompok dalam 3 menit'], illustration: 'Ikon kerja kelompok, diskusi, dan alat gambar kreatif', interactive: 'Kelompok mana yang siap mempresentasikan ide paling unik?' },
+        { title: 'Kesimpulan & Refleksi Akhir', subtitle: 'Merangkum Pemahaman Hari Ini', points: [`${materi} merupakan bagian penting yang harus kita pahami dan jaga`, 'Setiap tindakan kecil kita membawa dampak positif bagi lingkungan', 'Terima kasih atas keaktifan seluruh peserta didik hari ini!'], illustration: 'Bintang apresiasi dan ringkasan 3 poin emas pembelajaran', interactive: 'Tuliskan 1 kalimat kesimpulanmu di papan refleksi kelas!' }
+      ];
+
+      SLIDE_DECK = [];
+      for (let i = 0; i < count; i++) {
+        SLIDE_DECK.push({ ...templates[i % templates.length], slideNum: i + 1, tema });
+      }
+      CURRENT_SLIDE_IDX = 0;
+      renderSlideViewer();
+      addRecentHistory('Presentasi AI', `Slide Presentasi - ${materi}`);
+    }
+
+    function renderSlideViewer() {
+      const wrap = document.getElementById('m5-output-wrap');
+      if (!wrap || SLIDE_DECK.length === 0) return;
+      const s = SLIDE_DECK[CURRENT_SLIDE_IDX];
+      const bgMap = {
+        navy: 'from-navy-950 via-navy-900 to-navy-800 text-white border-gold-400',
+        turquoise: 'from-teal-900 via-turquoise-800 to-navy-900 text-white border-turquoise-300',
+        gold: 'from-amber-900 via-navy-900 to-slate-900 text-white border-gold-400'
+      };
+
+      const fullDocHtml = SLIDE_DECK.map(sl => `
+        <h2>Slide ${sl.slideNum}: ${escapeHtml(sl.title)}</h2>
+        <p><em>${escapeHtml(sl.subtitle)}</em></p>
+        <ul>${sl.points.map(pt => `<li>${escapeHtml(pt)}</li>`).join('')}</ul>
+        <p><strong>Saran Ilustrasi:</strong> ${escapeHtml(sl.illustration)}<br><strong>Pertanyaan Interaktif:</strong> ${escapeHtml(sl.interactive)}</p>
+      `).join('');
+
+      wrap.innerHTML = `
+        ${renderResultToolbar('m5-hidden-doc', `Presentasi - ${SLIDE_DECK[0].title}`, 'Presentasi AI')}
+        <div class="space-y-4">
+          <div class="rounded-3xl bg-gradient-to-br ${bgMap[s.tema] || bgMap.navy} border-2 p-6 sm:p-8 shadow-xl min-h-[290px] flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-turquoise-300 font-bold mb-3">
+                <span>SLIDE ${s.slideNum} DARI ${SLIDE_DECK.length}</span>
+                <span>GURU MASTER AI SLIDES</span>
+              </div>
+              <h3 class="font-display font-extrabold text-xl sm:text-2xl text-gold-400">${escapeHtml(s.title)}</h3>
+              <p class="text-xs text-slate-300 mb-4">${escapeHtml(s.subtitle)}</p>
+              <ul class="space-y-2 text-sm">
+                ${s.points.map(pt => `<li class="flex items-start gap-2"><span class="text-turquoise-400">▸</span><span>${escapeHtml(pt)}</span></li>`).join('')}
+              </ul>
+            </div>
+            <div class="mt-5 pt-3 border-t border-white/15 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="bg-white/10 rounded-xl p-2.5"><strong class="text-turquoise-300">🎨 Saran Ilustrasi:</strong> ${escapeHtml(s.illustration)}</div>
+              <div class="bg-white/10 rounded-xl p-2.5"><strong class="text-gold-300">💬 Pertanyaan Interaktif:</strong> ${escapeHtml(s.interactive)}</div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-2">
+            <button type="button" onclick="changeSlide(-1)" ${CURRENT_SLIDE_IDX === 0 ? 'disabled' : ''} class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 disabled:opacity-40 text-xs font-bold">&larr; Slide Sebelumnya</button>
+            <div class="flex gap-1.5 overflow-x-auto py-1">
+              ${SLIDE_DECK.map((_, idx) => `
+                <button type="button" onclick="CURRENT_SLIDE_IDX=${idx};renderSlideViewer()" class="w-8 h-8 rounded-lg text-xs font-bold ${idx === CURRENT_SLIDE_IDX ? 'bg-navy-900 text-gold-400' : 'bg-slate-100 dark:bg-slate-800'}">${idx + 1}</button>
+              `).join('')}
+            </div>
+            <button type="button" onclick="changeSlide(1)" ${CURRENT_SLIDE_IDX === SLIDE_DECK.length - 1 ? 'disabled' : ''} class="px-4 py-2 rounded-xl bg-navy-900 text-white disabled:opacity-40 text-xs font-bold">Slide Berikutnya &rarr;</button>
+          </div>
+          <div id="m5-hidden-doc" class="hidden edu-doc"><h1>Presentasi: ${escapeHtml(SLIDE_DECK[0].title)}</h1>${fullDocHtml}</div>
+        </div>
+      `;
+    }
+
+    function changeSlide(delta) {
+      const next = CURRENT_SLIDE_IDX + delta;
+      if (next >= 0 && next < SLIDE_DECK.length) {
+        CURRENT_SLIDE_IDX = next;
+        renderSlideViewer();
+      }
+    }
+
+    /*************************************************************************
+     * 12. MENU 6: CERITA DAN VIDEO PEMBELAJARAN
+     *************************************************************************/
+    function renderMenu6CeritaVideo(ws) {
+      ws.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+            <h2 class="font-display font-extrabold text-lg">🎬 Cerita &amp; Video Pembelajaran</h2>
+            <div>
+              <label class="block text-xs font-bold mb-1">Jenis Karya</label>
+              <select id="m6-jenis" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="Cerita Edukatif & Pertanyaan Pemahaman">Cerita Edukatif</option>
+                <option value="Cerita Inspiratif Pendidikan Karakter">Cerita Inspiratif</option>
+                <option value="Dongeng Pembelajaran Anak">Dongeng Pembelajaran</option>
+                <option value="Naskah Video Pembelajaran + Narasi Suara">Naskah Video &amp; Narasi Suara</option>
+                <option value="Storyboard Lengkap + Prompt Gambar Setiap Adegan">Storyboard &amp; Prompt Gambar Adegan</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Topik / Nilai Karakter</label>
+              <input type="text" id="m6-topik" value="Petualangan Tetes Air Menjaga Sungai Tetap Bersih" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Durasi</label>
+                <select id="m6-durasi" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                  <option value="2–3 Menit (Singkat)">2–3 Menit</option>
+                  <option value="5 Menit (Standar Kelas)" selected>5 Menit</option>
+                  <option value="8–10 Menit (Mendalam)">8–10 Menit</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Gaya Cerita</label>
+                <select id="m6-gaya" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                  <option value="Hangat & Imajinatif">Hangat &amp; Imajinatif</option>
+                  <option value="Petualangan Seru">Petualangan Seru</option>
+                  <option value="Dokumenter Edukatif">Dokumenter Edukatif</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" onclick="generateMenu6()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-navy-900 text-white font-display font-bold text-sm shadow-lg transition">
+              🎥 Hasilkan Cerita &amp; Storyboard
+            </button>
+          </div>
+          <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 min-h-[420px]">
+            <div id="m6-output-wrap">
+              <div class="h-80 flex flex-col items-center justify-center text-center text-slate-400 p-6">
+                <span class="text-4xl mb-3">🎬</span>
+                <p class="font-semibold text-slate-600 dark:text-slate-300">Generator Dongeng, Naskah Video &amp; Storyboard</p>
+                <p class="text-xs mt-1 max-w-md">Menghasilkan cerita lengkap dengan narasi suara (voice over), tabel storyboard adegan, prompt gambar AI, dan pertanyaan pemahaman.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function generateMenu6() {
+      const jenis = document.getElementById('m6-jenis').value;
+      const topik = document.getElementById('m6-topik').value.trim() || 'Cerita Edukasi';
+      const durasi = document.getElementById('m6-durasi').value;
+      const gaya = document.getElementById('m6-gaya').value;
+      const p = APP_STATE.profile;
+
+      const wrap = document.getElementById('m6-output-wrap');
+      wrap.innerHTML = `<div class="py-20 text-center text-sm font-semibold text-purple-600 animate-pulse">⏳ Menyusun ${escapeHtml(jenis)} bergaya ${escapeHtml(gaya)}...</div>`;
+
+      const html = await callAiService(
+        `Buat ${jenis} jenjang ${p.jenjang} kelas ${p.kelas} dengan topik "${topik}", durasi ${durasi}, gaya ${gaya}. Sertakan cerita/narasi suara, storyboard per adegan, prompt gambar, dan pertanyaan pemahaman.`,
+        () => `
+          <h1>${escapeHtml(jenis.toUpperCase())}: ${escapeHtml(topik)}</h1>
+          <p><strong>Jenjang:</strong> ${escapeHtml(p.jenjang)} (${escapeHtml(p.kelas)}) &bull; <strong>Durasi:</strong> ${escapeHtml(durasi)} &bull; <strong>Gaya:</strong> ${escapeHtml(gaya)}</p>
+
+          <h2>1. Naskah Cerita &amp; Narasi Suara (Voice Over)</h2>
+          <p><strong>[Narator - Nada hangat dan penuh semangat]:</strong> Di sebuah lembah hijau yang asri, dimulailah kisah tentang <em>${escapeHtml(topik)}</em>. Setiap hari, tokoh utama kita belajar bahwa hal-hal kecil di alam dan kehidupan memiliki peran yang luar biasa besar.</p>
+          <p><strong>[Konflik &amp; Penemuan]:</strong> Suatu ketika, muncul tantangan yang membuat semua penghuni desa berpikir keras. Dengan rasa ingin tahu, pengamatan teliti, dan kerja sama yang baik, mereka akhirnya menemukan solusi cerdas yang membawa kebaikan bagi semua.</p>
+          <p><strong>[Pesan Moral]:</strong> Dari kisah ini kita belajar bahwa ilmu pengetahuan menjadi sangat bermakna ketika digunakan untuk menjaga sesama dan lingkungan sekitar.</p>
+
+          <h2>2. Storyboard &amp; Prompt Gambar Setiap Adegan</h2>
+          <table>
+            <tr><th>Adegan</th><th>Visual &amp; Aksi</th><th>Narasi Suara</th><th>Prompt Gambar AI (Siap Pakai)</th></tr>
+            <tr>
+              <td>Adegan 1 (Pembuka)</td>
+              <td>Pemandangan pagi cerah dan tokoh utama memperkenalkan topik.</td>
+              <td>“Halo teman-teman! Hari ini kita akan menjelajahi ${escapeHtml(topik)}.”</td>
+              <td><code>3D educational illustration, bright Indonesian school village morning, friendly character exploring ${escapeHtml(topik)}, vibrant colors, soft lighting, 16:9</code></td>
+            </tr>
+            <tr>
+              <td>Adegan 2 (Inti)</td>
+              <td>Tokoh mengamati proses dan menemukan tantangan utama.</td>
+              <td>“Lihat! Ternyata setiap bagian saling terhubung satu sama lain.”</td>
+              <td><code>3D children book style educational scene showing ${escapeHtml(topik)} in action, clear visual storytelling, warm turquoise and gold tones, 16:9</code></td>
+            </tr>
+            <tr>
+              <td>Adegan 3 (Penutup)</td>
+              <td>Solusi berhasil diterapkan dan semua tersenyum gembira.</td>
+              <td>“Mari kita terapkan pelajaran berharga ini mulai hari ini!”</td>
+              <td><code>Happy Indonesian students and teacher celebrating learning achievement about ${escapeHtml(topik)}, clean modern flat vector illustration, 16:9</code></td>
+            </tr>
+          </table>
+
+          <h2>3. Pertanyaan Pemahaman untuk Peserta Didik</h2>
+          <ol>
+            <li>Siapa tokoh utama dalam cerita tersebut dan tantangan apa yang dihadapinya?</li>
+            <li>Bagaimana cara tokoh menyelesaikan masalah terkait <em>${escapeHtml(topik)}</em>?</li>
+            <li>Sikap baik apa yang dapat kamu tiru dari cerita tersebut dalam kehidupan sehari-hari?</li>
+          </ol>
+        `
+      );
+
+      const docTitle = `Cerita & Video - ${topik}`;
+      wrap.innerHTML = renderResultToolbar('m6-doc-content', docTitle, 'Cerita & Video') +
+        `<div id="m6-doc-content" contenteditable="true" class="edu-doc outline-none">${html}</div>`;
+      addRecentHistory('Cerita & Video', docTitle);
+    }
+
+    /*************************************************************************
+     * 13. MENU 7: RAPORT DAN DESKRIPSI SISWA
+     *************************************************************************/
+    function renderMenu7Raport(ws) {
+      ws.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+            <h2 class="font-display font-extrabold text-lg">🎓 Generator Deskripsi Raport Siswa</h2>
+            <div class="p-3 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-xs text-sky-900 dark:text-sky-200">
+              🔒 <strong>Prinsip Objektivitas &amp; Privasi:</strong> Deskripsi disusun murni berdasarkan data asesmen yang Anda masukkan. Anda dapat memakai inisial/kode siswa.
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Nama / Kode Siswa</label>
+                <input type="text" id="m7-siswa" value="Ananda Raka (Kode: S-01)" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Nilai / Predikat</label>
+                <input type="text" id="m7-nilai" value="88 (Sangat Baik / Cakap)" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Capaian Pembelajaran (CP) yang Dinilai</label>
+              <textarea id="m7-cp" rows="2" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">Menganalisis hubungan antar komponen ekosistem dan jaring-jaring makanan di lingkungan sekitar.</textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Kekuatan Siswa (Berdasarkan Bukti Belajar)</label>
+              <input type="text" id="m7-kuat" value="Mampu mengidentifikasi peran produsen dan konsumen dengan sangat tepat saat diskusi kelompok." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Aspek yang Perlu Ditingkatkan</label>
+              <input type="text" id="m7-tingkat" value="Ketelitian dalam menuliskan kesimpulan dampak perubahan populasi pada laporan pengamatan." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <button type="button" onclick="generateMenu7()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-sky-600 to-navy-900 text-white font-display font-bold text-sm shadow-lg transition">
+              ✍️ Susun Deskripsi Raport Objektif
+            </button>
+          </div>
+          <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 min-h-[420px]">
+            <div id="m7-output-wrap">
+              <div class="h-80 flex flex-col items-center justify-center text-center text-slate-400 p-6">
+                <span class="text-4xl mb-3">🎓</span>
+                <p class="font-semibold text-slate-600 dark:text-slate-300">Narasi Deskripsi Raport Santun &amp; Membangun</p>
+                <p class="text-xs mt-1 max-w-md">Menghasilkan deskripsi capaian belajar, kekuatan peserta didik, hal yang perlu ditingkatkan, dan rekomendasi tindak lanjut.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function generateMenu7() {
+      const siswa = document.getElementById('m7-siswa').value.trim() || 'Peserta Didik';
+      const nilai = document.getElementById('m7-nilai').value.trim();
+      const cp = document.getElementById('m7-cp').value.trim();
+      const kuat = document.getElementById('m7-kuat').value.trim();
+      const tingkat = document.getElementById('m7-tingkat').value.trim();
+      const p = APP_STATE.profile;
+
+      const html = `
+        <h1>DESKRIPSI CAPAIAN HASIL BELAJAR PESERTA DIDIK</h1>
+        <table>
+          <tr><th>Nama / Kode Siswa</th><td>${escapeHtml(siswa)}</td><th>Kelas / Jenjang</th><td>${escapeHtml(p.kelas)} (${escapeHtml(p.jenjang)})</td></tr>
+          <tr><th>Mata Pelajaran</th><td>${escapeHtml(p.mapel)}</td><th>Nilai / Capaian</th><td><strong>${escapeHtml(nilai)}</strong></td></tr>
+        </table>
+
+        <h2>1. Narasi Deskripsi Raport (Siap Salin ke E-Raport)</h2>
+        <div style="padding: 12px; border-left: 4px solid #0D9488; background: #F0FDFA; margin: 10px 0;">
+          <p style="margin:0;">Menunjukkan penguasaan yang baik dalam <strong>${escapeHtml(cp)}</strong> (Nilai: ${escapeHtml(nilai)}). Peserta didik menonjol dalam hal <em>${escapeHtml(kuat.toLowerCase())}</em>. Perlu pendampingan berkelanjutan untuk meningkatkan <em>${escapeHtml(tingkat.toLowerCase())}</em> agar capaian belajar semakin optimal.</p>
+        </div>
+
+        <h2>2. Rincian Kekuatan &amp; Area Pengembangan</h2>
+        <ul>
+          <li><strong>Kekuatan Peserta Didik:</strong> ${escapeHtml(kuat)}</li>
+          <li><strong>Hal yang Perlu Ditingkatkan:</strong> ${escapeHtml(tingkat)}</li>
+        </ul>
+
+        <h2>3. Rekomendasi Tindak Lanjut (Untuk Guru &amp; Orang Tua)</h2>
+        <ol>
+          <li>Memberikan apresiasi atas capaian positif yang telah ditunjukkan pada kegiatan diskusi maupun tugas harian.</li>
+          <li>Melatih pembiasaan membaca kembali hasil pekerjaan sebelum dikumpulkan melalui daftar periksa (<em>checklist</em>) sederhana di kelas maupun di rumah.</li>
+        </ol>
+      `;
+
+      const docTitle = `Deskripsi Raport - ${siswa}`;
+      document.getElementById('m7-output-wrap').innerHTML = renderResultToolbar('m7-doc-content', docTitle, 'Raport Siswa') +
+        `<div id="m7-doc-content" contenteditable="true" class="edu-doc outline-none">${html}</div>`;
+      addRecentHistory('Raport Siswa', docTitle);
+    }
+
+    /*************************************************************************
+     * 14. MENU 8: ADMINISTRASI GURU (9 TAB INTERAKTIF & PENYIMPANAN)
+     *************************************************************************/
+    let ACTIVE_ADMIN_TAB = 'jurnal';
+
+    function renderMenu8Administrasi(ws) {
+      const tabs = [
+        { id: 'jurnal', label: '1. Jurnal Mengajar' },
+        { id: 'absensi', label: '2. Daftar Hadir' },
+        { id: 'agenda', label: '3. Agenda Kelas' },
+        { id: 'perkembangan', label: '4. Perkembangan Siswa' },
+        { id: 'prota', label: '5. Program Tahunan' },
+        { id: 'promes', label: '6. Program Semester' },
+        { id: 'jadwal', label: '7. Jadwal Pelajaran' },
+        { id: 'refleksi', label: '8. Catatan Refleksi' },
+        { id: 'kelas', label: '9. Administrasi Kelas' }
+      ];
+
+      ws.innerHTML = `
+        <div class="space-y-5">
+          <div class="flex flex-wrap gap-1.5 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-800">
+            ${tabs.map(t => `
+              <button type="button" onclick="ACTIVE_ADMIN_TAB='${t.id}';renderMenu8Administrasi(document.getElementById('main-workspace'))" class="px-3 py-2 rounded-xl text-xs font-bold transition ${ACTIVE_ADMIN_TAB === t.id ? 'bg-navy-900 text-gold-400 shadow' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}">
+                ${t.label}
+              </button>
+            `).join('')}
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-5">
+            ${renderAdminTabContent(ACTIVE_ADMIN_TAB)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAdminTabContent(tab) {
+      const p = APP_STATE.profile;
+      const rows = APP_STATE.adminData[tab] || [];
+
+      const configs = {
+        jurnal: {
+          title: 'Jurnal Mengajar Harian',
+          fields: [
+            { name: 'tanggal', label: 'Tanggal', type: 'date', val: new Date().toISOString().slice(0, 10) },
+            { name: 'kelas', label: 'Kelas', val: p.kelas },
+            { name: 'mapel', label: 'Mata Pelajaran', val: p.mapel },
+            { name: 'materi', label: 'Materi / Topik', placeholder: 'Topik pembelajaran hari ini' },
+            { name: 'metode', label: 'Metode / Aktivitas', placeholder: 'Diskusi, praktik, kuis...' },
+            { name: 'keterangan', label: 'Catatan Ketercapaian', placeholder: 'Hasil belajar siswa' }
+          ],
+          cols: ['tanggal', 'kelas', 'mapel', 'materi', 'metode', 'keterangan'],
+          headers: ['Tanggal', 'Kelas', 'Mapel', 'Materi', 'Metode', 'Keterangan']
+        },
+        absensi: {
+          title: 'Daftar Hadir & Rekap Kehadiran Kelas',
+          fields: [
+            { name: 'tanggal', label: 'Tanggal', type: 'date', val: new Date().toISOString().slice(0, 10) },
+            { name: 'kelas', label: 'Kelas', val: p.kelas },
+            { name: 'hadir', label: 'Hadir', type: 'number', val: '28' },
+            { name: 'sakit', label: 'Sakit', type: 'number', val: '0' },
+            { name: 'izin', label: 'Izin', type: 'number', val: '0' },
+            { name: 'alpa', label: 'Alpa', type: 'number', val: '0' },
+            { name: 'catatan', label: 'Keterangan Siswa', placeholder: 'Nama siswa yang tidak hadir' }
+          ],
+          cols: ['tanggal', 'kelas', 'hadir', 'sakit', 'izin', 'alpa', 'catatan'],
+          headers: ['Tanggal', 'Kelas', 'Hadir', 'Sakit', 'Izin', 'Alpa', 'Catatan']
+        },
+        agenda: {
+          title: 'Agenda Kegiatan Kelas & Sekolah',
+          fields: [
+            { name: 'tanggal', label: 'Tanggal', type: 'date', val: new Date().toISOString().slice(0, 10) },
+            { name: 'kegiatan', label: 'Nama Kegiatan', placeholder: 'Rapat wali murid, P5, ujian...' },
+            { name: 'penanggungJawab', label: 'Penanggung Jawab', val: p.nama },
+            { name: 'status', label: 'Status', val: 'Terjadwal' }
+          ],
+          cols: ['tanggal', 'kegiatan', 'penanggungJawab', 'status'],
+          headers: ['Tanggal', 'Kegiatan', 'Penanggung Jawab', 'Status']
+        },
+        perkembangan: {
+          title: 'Catatan Perkembangan Peserta Didik',
+          fields: [
+            { name: 'siswa', label: 'Nama / Kode Siswa', placeholder: 'Contoh: Siswa-02 (B.S.)' },
+            { name: 'aspek', label: 'Aspek Perkembangan', placeholder: 'Akademik / Sosial Emosional / Bakat' },
+            { name: 'catatan', label: 'Catatan Observasi Guru', placeholder: 'Perkembangan positif atau dukungan yang diberikan' }
+          ],
+          cols: ['siswa', 'aspek', 'catatan'],
+          headers: ['Siswa', 'Aspek', 'Catatan Observasi']
+        },
+        prota: {
+          title: 'Program Tahunan (Prota)',
+          fields: [
+            { name: 'semester', label: 'Semester', val: 'Ganjil' },
+            { name: 'elemen', label: 'Elemen / Lingkup Materi', placeholder: 'Elemen CP' },
+            { name: 'materiPokok', label: 'Materi Pokok', placeholder: 'Daftar topik utama' },
+            { name: 'alokasi', label: 'Alokasi JP', val: '24 JP' }
+          ],
+          cols: ['semester', 'elemen', 'materiPokok', 'alokasi'],
+          headers: ['Semester', 'Elemen', 'Materi Pokok', 'Alokasi Waktu']
+        },
+        promes: {
+          title: 'Program Semester (Promes)',
+          fields: [
+            { name: 'bulan', label: 'Bulan', placeholder: 'Juli - Agustus' },
+            { name: 'minggu', label: 'Minggu Ke-', placeholder: 'Minggu 1 - 4' },
+            { name: 'tujuan', label: 'Tujuan Pembelajaran', placeholder: 'Ringkasan TP' },
+            { name: 'alokasi', label: 'Alokasi JP', val: '12 JP' }
+          ],
+          cols: ['bulan', 'minggu', 'tujuan', 'alokasi'],
+          headers: ['Bulan', 'Minggu', 'Tujuan Pembelajaran', 'Alokasi']
+        },
+        jadwal: {
+          title: 'Jadwal Pelajaran Mengajar',
+          fields: [
+            { name: 'hari', label: 'Hari', placeholder: 'Senin' },
+            { name: 'jam', label: 'Jam Pelajaran', placeholder: '07.30 - 09.15' },
+            { name: 'kelas', label: 'Kelas', val: p.kelas },
+            { name: 'mapel', label: 'Mata Pelajaran', val: p.mapel },
+            { name: 'ruang', label: 'Ruang / Lab', placeholder: 'Ruang Kelas' }
+          ],
+          cols: ['hari', 'jam', 'kelas', 'mapel', 'ruang'],
+          headers: ['Hari', 'Jam', 'Kelas', 'Mata Pelajaran', 'Ruang']
+        },
+        refleksi: {
+          title: 'Catatan Refleksi Pembelajaran Guru',
+          fields: [
+            { name: 'tanggal', label: 'Tanggal', type: 'date', val: new Date().toISOString().slice(0, 10) },
+            { name: 'topik', label: 'Topik Pembelajaran', placeholder: 'Materi yang diajarkan' },
+            { name: 'keberhasilan', label: 'Hal yang Berjalan Baik', placeholder: 'Praktik baik hari ini' },
+            { name: 'tindakLanjut', label: 'Rencana Perbaikan', placeholder: 'Langkah pertemuan berikutnya' }
+          ],
+          cols: ['tanggal', 'topik', 'keberhasilan', 'tindakLanjut'],
+          headers: ['Tanggal', 'Topik', 'Keberhasilan', 'Tindak Lanjut']
+        },
+        kelas: {
+          title: 'Administrasi & Inventaris Kelas',
+          fields: [
+            { name: 'item', label: 'Komponen / Inventaris', placeholder: 'Papan tulis, pojok baca, struktur kelas...' },
+            { name: 'kondisi', label: 'Kondisi', val: 'Baik & Lengkap' },
+            { name: 'jumlah', label: 'Jumlah', val: '1 Unit' },
+            { name: 'keterangan', label: 'Keterangan', placeholder: 'Catatan pengelolaan kelas' }
+          ],
+          cols: ['item', 'kondisi', 'jumlah', 'keterangan'],
+          headers: ['Komponen', 'Kondisi', 'Jumlah', 'Keterangan']
+        }
+      };
+
+      const cfg = configs[tab];
+      return `
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="font-display font-extrabold text-lg">🗂️ ${cfg.title}</h3>
+          <button type="button" onclick="printDocumentElement('admin-print-table', '${cfg.title}')" class="px-3.5 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold">🖨️ Cetak Tabel Administrasi</button>
+        </div>
+
+        <form onsubmit="addAdminRow(event, '${tab}')" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+          ${cfg.fields.map(f => `
+            <div>
+              <label class="block text-[11px] font-bold mb-1">${f.label}</label>
+              <input type="${f.type || 'text'}" name="${f.name}" required value="${escapeHtml(f.val || '')}" placeholder="${escapeHtml(f.placeholder || '')}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs" />
+            </div>
+          `).join('')}
+          <div class="sm:col-span-2 lg:col-span-3 flex justify-end">
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-turquoise-600 hover:bg-turquoise-500 text-white text-xs font-bold shadow">+ Tambah Data</button>
+          </div>
+        </form>
+
+        <div id="admin-print-table" class="overflow-x-auto edu-doc">
+          <h2 style="margin-top:0;">${cfg.title} — ${escapeHtml(p.kelas)}</h2>
+          <table>
+            <thead>
+              <tr>
+                ${cfg.headers.map(h => `<th>${h}</th>`).join('')}
+                <th class="no-print" style="width:70px;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.length === 0
+                ? `<tr><td colspan="${cfg.headers.length + 1}" class="text-center text-slate-400 py-4">Belum ada data tercatat.</td></tr>`
+                : rows.map((r, rIdx) => `
+                    <tr>
+                      ${cfg.cols.map(c => `<td>${escapeHtml(r[c] ?? '')}</td>`).join('')}
+                      <td class="no-print">
+                        <button type="button" onclick="deleteAdminRow('${tab}', ${rIdx})" class="text-rose-600 hover:underline text-xs font-bold">Hapus</button>
+                      </td>
+                    </tr>
+                  `).join('')
+              }
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function addAdminRow(e, tab) {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const entry = { id: Date.now() };
+      for (const [k, v] of fd.entries()) entry[k] = v;
+      APP_STATE.adminData[tab] = APP_STATE.adminData[tab] || [];
+      APP_STATE.adminData[tab].unshift(entry);
+      safeStorageSet('gma_admin_data', JSON.stringify(APP_STATE.adminData));
+      showToast('Data administrasi berhasil disimpan!', 'success');
+      renderMenu8Administrasi(document.getElementById('main-workspace'));
+    }
+
+    function deleteAdminRow(tab, idx) {
+      APP_STATE.adminData[tab].splice(idx, 1);
+      safeStorageSet('gma_admin_data', JSON.stringify(APP_STATE.adminData));
+      showToast('Baris data dihapus.', 'info');
+      renderMenu8Administrasi(document.getElementById('main-workspace'));
+    }
+
+    /*************************************************************************
+     * 15. MENU 9: PERPUSTAKAAN DIGITAL (SUMBER RESMI KEMENDIKBUD)
+     *************************************************************************/
+    const DIGITAL_LIBRARY_ITEMS = [
+      { title: 'Sistem Perbukuan Nasional (SIBI) — Buku Teks Utama & Nonteks', category: 'Buku pembelajaran', jenjang: 'Semua Jenjang', source: 'Pusat Perbukuan Kemendikbudristek', url: 'https://buku.kemdikbud.go.id', summary: 'Portal resmi buku teks pelajaran Kurikulum Merdeka (PDF & Buku Interaktif) gratis untuk guru dan siswa PAUD, SD, SMP, SMA, SMK, dan SLB.' },
+      { title: 'Kurikulum Merdeka — Capaian Pembelajaran (CP) & Panduan Pembelajaran Asesmen', category: 'Materi Kurikulum Merdeka', jenjang: 'Semua Jenjang', source: 'BSKAP Kemendikbudristek', url: 'https://kurikulum.kemdikbud.go.id', summary: 'Dokumen resmi struktur kurikulum, Capaian Pembelajaran terbaru setiap fase, serta panduan pembelajaran dan asesmen.' },
+      { title: 'Rumah Pendidikan / Platform Merdeka Mengajar (PMM)', category: 'Referensi guru', jenjang: 'Semua Jenjang', source: 'Kemendikbudristek RI', url: 'https://guru.kemdikbud.go.id', summary: 'Ruang belajar, perangkat ajar terkurasi, pelatihan mandiri, dan komunitas praktik baik guru Indonesia.' },
+      { title: 'Ringkasan Konsep: Pembelajaran Mendalam (Deep Learning) di Kelas', category: 'Rangkuman materi', jenjang: 'SD/MI', source: 'Modul Internal Guru Master AI', url: '', summary: 'Pembelajaran mendalam menekankan 3 prinsip utama: Berkesadaran (Mindful), Bermakna (Meaningful), dan Menggembirakan (Joyful) untuk membangun 8 dimensi profil lulusan.' },
+      { title: 'Panduan Menyusun LKPD Eksploratif & Berdiferensiasi', category: 'LKPD', jenjang: 'SMP/MTs', source: 'Referensi Pedagogi Guru Master AI', url: '', summary: 'Langkah menyusun LKPD berbasis masalah nyata dengan penyesuaian tingkat dukungan (scaffolding) bagi beragam kesiapan belajar siswa.' },
+      { title: 'Bahan Ajar & Modul Praktikum Vokasi Berbasis Teaching Factory', category: 'Modul pembelajaran', jenjang: 'SMK', source: 'Direktorat SMK Kemendikbudristek', url: 'https://smk.kemdikbud.go.id', summary: 'Referensi penyelarasan kurikulum vokasi dengan standar dunia usaha dan dunia industri (DUDIKA).' },
+      { title: 'Panduan Pendidikan Inklusif & Program Pembelajaran Individual (PPI)', category: 'Bahan ajar', jenjang: 'SLB', source: 'Direktorat PMPK Kemendikbudristek', url: 'https://buku.kemdikbud.go.id', summary: 'Acuan adaptasi kurikulum, asesmen fungsional, dan media aksesibel bagi peserta didik berkebutuhan khusus.' },
+      { title: 'Rumah Belajar — Media Pembelajaran Interaktif & Laboratorium Maya', category: 'Media pembelajaran', jenjang: 'SMA/MA', source: 'Pusdatin Kemendikbudristek', url: 'https://belajar.kemdikbud.go.id', summary: 'Sumber belajar digital, simulasi laboratorium sains maya, dan bank konten edukasi nasional.' }
+    ];
+
+    function renderMenu9Perpustakaan(ws) {
+      ws.innerHTML = `
+        <div class="space-y-5">
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 class="font-display font-extrabold text-lg">📚 Perpustakaan Digital Pendidikan</h2>
+                <p class="text-xs text-slate-500">Menggunakan tautan portal resmi Kemendikbudristek &amp; ringkasan referensi edukatif terverifikasi.</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <input type="text" id="lib-search" oninput="filterDigitalLibrary()" placeholder="Cari judul buku atau materi..." class="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              <select id="lib-cat" onchange="filterDigitalLibrary()" class="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="">Semua Kategori</option>
+                <option value="Buku pembelajaran">Buku pembelajaran</option>
+                <option value="Materi Kurikulum Merdeka">Materi Kurikulum Merdeka</option>
+                <option value="Rangkuman materi">Rangkuman materi</option>
+                <option value="Bahan ajar">Bahan ajar</option>
+                <option value="LKPD">LKPD</option>
+                <option value="Modul pembelajaran">Modul pembelajaran</option>
+                <option value="Referensi guru">Referensi guru</option>
+                <option value="Media pembelajaran">Media pembelajaran</option>
+              </select>
+              <select id="lib-jenjang" onchange="filterDigitalLibrary()" class="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="">Semua Jenjang</option>
+                <option value="Semua Jenjang">Semua Jenjang</option>
+                <option value="SD/MI">SD/MI</option>
+                <option value="SMP/MTs">SMP/MTs</option>
+                <option value="SMA/MA">SMA/MA</option>
+                <option value="SMK">SMK</option>
+                <option value="SLB">SLB</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="lib-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+      `;
+      filterDigitalLibrary();
+    }
+
+    function filterDigitalLibrary() {
+      const q = (document.getElementById('lib-search')?.value || '').toLowerCase();
+      const cat = document.getElementById('lib-cat')?.value || '';
+      const jen = document.getElementById('lib-jenjang')?.value || '';
+      const grid = document.getElementById('lib-grid');
+      if (!grid) return;
+
+      const filtered = DIGITAL_LIBRARY_ITEMS.filter(it => {
+        const matchQ = !q || (it.title + ' ' + it.summary + ' ' + it.source).toLowerCase().includes(q);
+        const matchC = !cat || it.category === cat;
+        const matchJ = !jen || it.jenjang === jen || it.jenjang === 'Semua Jenjang';
+        return matchQ && matchC && matchJ;
+      });
+
+      grid.innerHTML = filtered.map((it, idx) => `
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-turquoise-100 dark:bg-turquoise-900/40 text-turquoise-800 dark:text-turquoise-300 text-[11px] font-bold">${escapeHtml(it.category)}</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-semibold">${escapeHtml(it.jenjang)}</span>
+            </div>
+            <h3 class="font-display font-bold text-base text-navy-900 dark:text-white">${escapeHtml(it.title)}</h3>
+            <p class="text-[11px] text-amber-700 dark:text-gold-400 font-semibold mt-0.5">Sumber: ${escapeHtml(it.source)}</p>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">${escapeHtml(it.summary)}</p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+            ${it.url
+              ? `<a href="${escapeHtml(it.url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold hover:bg-navy-800 transition">🌐 Buka Portal Resmi &nearr;</a>`
+              : `<button type="button" onclick="openLibraryReader(${idx})" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-turquoise-600 text-white text-xs font-bold hover:bg-turquoise-500 transition">📖 Baca Ringkasan Lengkap</button>`
+            }
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openLibraryReader(idx) {
+      const it = DIGITAL_LIBRARY_ITEMS[idx];
+      if (!it) return;
+      openModal({
+        title: it.title,
+        bodyHtml: `<div class="edu-doc"><p><strong>Kategori:</strong> ${escapeHtml(it.category)} | <strong>Sumber:</strong> ${escapeHtml(it.source)}</p><p>${escapeHtml(it.summary)}</p><p>Anda dapat langsung menerapkan konsep ini menggunakan fitur <strong>Perangkat Pembelajaran</strong> atau <strong>LKPD Generator</strong> di aplikasi Guru Master AI.</p></div>`
+      });
+    }
+
+    /*************************************************************************
+     * 16. MENU 10: GURU BELAJAR (PENGEMBANGAN KOMPETENSI)
+     *************************************************************************/
+    const GURU_BELAJAR_MODULES = [
+      { id: 'deep-learning', title: 'Pembelajaran Mendalam (Deep Learning)', duration: '15 Menit Baca', summary: 'Memahami kerangka Berkesadaran (Mindful), Bermakna (Meaningful), dan Menggembirakan (Joyful) untuk mentransformasi pembelajaran di kelas.', content: '<h2>Apa Itu Pembelajaran Mendalam (Deep Learning)?</h2><p>Pembelajaran mendalam bukan sekadar menghafal materi, melainkan proses memuliakan peserta didik melalui olah pikir, olah hati, olah rasa, dan olah raga secara terpadu.</p><ul><li><strong>Berkesadaran (Mindful):</strong> Siswa sadar akan tujuan belajarnya dan aktif mengatur strategi berpikirnya.</li><li><strong>Bermakna (Meaningful):</strong> Materi baru dikaitkan dengan pengetahuan awal dan kehidupan nyata siswa.</li><li><strong>Menggembirakan (Joyful):</strong> Suasana belajar aman, positif, menantang, dan memicu rasa ingin tahu.</li></ul>' },
+      { id: 'koding-ai', title: 'Koding dan Kecerdasan Artifisial (AI)', duration: '20 Menit Baca', summary: 'Pengenalan berpikir komputasional (computational thinking), logika algoritma sederhana, dan etika pemanfaatan AI bagi guru & siswa.', content: '<h2>Integrasi Koding &amp; AI di Sekolah</h2><p>Berpikir komputasional melatih siswa memecahkan masalah melalui 4 pilar: <strong>Dekomposisi</strong> (memecah masalah besar), <strong>Pengenalan Pola</strong>, <strong>Abstraksi</strong>, dan <strong>Algoritma</strong> (langkah sistematis).</p><p>Di jenjang SD/SMP, koding dapat dimulai secara <em>unplugged</em> (tanpa komputer) melalui permainan kartu arah sebelum beralih ke pemrograman blok visual.</p>' },
+      { id: 'literasi-digital', title: 'Literasi Digital & Keamanan Siber Guru', duration: '12 Menit Baca', summary: 'Kecakapan digital, budaya digital, etika digital, serta perlindungan data pribadi peserta didik di ruang digital.', content: '<h2>4 Pilar Literasi Digital Pendidikan</h2><ol><li><strong>Digital Skills:</strong> Kemampuan mengoperasikan perangkat dan aplikasi pembelajaran.</li><li><strong>Digital Culture:</strong> Membangun wawasan kebangsaan dan nilai Pancasila di ruang digital.</li><li><strong>Digital Ethics:</strong> Menghindari plagiarisme dan menghormati hak cipta karya orang lain.</li><li><strong>Digital Safety:</strong> Melindungi data pribadi siswa dan kata sandi akun pendidikan.</li></ol>' },
+      { id: 'numerasi', title: 'Penguatan Numerasi Lintas Mata Pelajaran', duration: '15 Menit Baca', summary: 'Strategi mengintegrasikan kemampuan membaca data, grafik, estimasi, dan penalaran kuantitatif pada semua mata pelajaran.', content: '<h2>Numerasi Bukan Hanya Matematika</h2><p>Guru IPS dapat mengajak siswa membaca grafik kependudukan; guru IPA menganalisis tabel suhu; guru Bahasa menghitung rata-rata durasi membaca. Numerasi adalah kemampuan menggunakan konsep bilangan dan alat analisis untuk memecahkan masalah sehari-hari.</p>' },
+      { id: 'diferensiasi', title: 'Pembelajaran Berdiferensiasi Praktis', duration: '18 Menit Baca', summary: 'Cara memetakan kesiapan belajar, minat, dan profil belajar siswa untuk menyusun diferensiasi konten, proses, dan produk.', content: '<h2>3 Strategi Diferensiasi di Kelas</h2><ul><li><strong>Diferensiasi Konten:</strong> Menyediakan bacaan, video, atau alat peraga sesuai tingkat kesiapan murid.</li><li><strong>Diferensiasi Proses:</strong> Memberikan pendampingan bertahap (scaffolding) bagi kelompok yang membutuhkan.</li><li><strong>Diferensiasi Produk:</strong> Membebaskan murid memilih bentuk karya akhir (laporan, poster, rekaman suara, atau demonstrasi).</li></ul>' },
+      { id: 'canva-ai', title: 'Canva & Pemanfaatan AI untuk Media Ajar', duration: '15 Menit Baca', summary: 'Panduan cepat membuat infografis, presentasi interaktif, dan kartu edukasi menarik menggunakan akun belajar.id & prompt AI.', content: '<h2>Langkah Cepat Membuat Media Ajar Visual</h2><p>Gunakan fitur <strong>Presentasi AI</strong> atau <strong>Cerita &amp; Video Pembelajaran</strong> di Guru Master AI untuk menyusun kerangka konten dan prompt visual, lalu wujudkan menjadi poster atau slide interaktif menggunakan akun Canva Pendidikan (belajar.id).</p>' }
+    ];
+
+    function renderMenu10GuruBelajar(ws) {
+      ws.innerHTML = `
+        <div class="space-y-5">
+          <div class="bg-gradient-to-r from-navy-900 to-amber-700 rounded-2xl p-5 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="font-display font-extrabold text-xl">💡 Guru Belajar — Ruang Pengembangan Kompetensi</h2>
+              <p class="text-xs text-slate-200 mt-1">Artikel praktis, panduan implementasi kurikulum, dan tutorial teknologi pendidikan siap baca.</p>
+            </div>
+            <span class="px-3.5 py-1.5 rounded-full bg-white/15 text-gold-300 text-xs font-bold shrink-0">
+              Selesai Dibaca: ${APP_STATE.learnedModules.length} / ${GURU_BELAJAR_MODULES.length} Modul
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            ${GURU_BELAJAR_MODULES.map((m, idx) => {
+              const done = APP_STATE.learnedModules.includes(m.id);
+              return `
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+                  <div>
+                    <div class="flex items-center justify-between text-[11px] mb-2">
+                      <span class="font-bold text-turquoise-700 dark:text-turquoise-300">⏱️ ${m.duration}</span>
+                      ${done ? `<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">✅ Selesai</span>` : ''}
+                    </div>
+                    <h3 class="font-display font-bold text-base">${escapeHtml(m.title)}</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">${escapeHtml(m.summary)}</p>
+                  </div>
+                  <button type="button" onclick="openGuruBelajarArticle(${idx})" class="w-full py-2.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold transition">
+                    📖 Baca Materi Lengkap
+                  </button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function openGuruBelajarArticle(idx) {
+      const m = GURU_BELAJAR_MODULES[idx];
+      if (!m) return;
+      openModal({
+        title: m.title,
+        bodyHtml: `<div class="edu-doc">${m.content}</div>`,
+        footerHtml: `
+          <button type="button" onclick="markModuleLearned('${m.id}')" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold">✅ Tandai Selesai Belajar</button>
+          <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold">Tutup</button>
+        `
+      });
+    }
+
+    function markModuleLearned(id) {
+      if (!APP_STATE.learnedModules.includes(id)) {
+        APP_STATE.learnedModules.push(id);
+        safeStorageSet('gma_learned_modules', JSON.stringify(APP_STATE.learnedModules));
+      }
+      closeModal();
+      showToast('Selamat! Modul kompetensi ditandai selesai.', 'success');
+      renderMenu10GuruBelajar(document.getElementById('main-workspace'));
+    }
+
+    /*************************************************************************
+     * 17. MENU 11: KOMUNIKASI SEKOLAH
+     *************************************************************************/
+    function renderMenu11Komunikasi(ws) {
+      const p = APP_STATE.profile;
+      ws.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+            <h2 class="font-display font-extrabold text-lg">✉️ Generator Komunikasi &amp; Surat Sekolah</h2>
+            <div>
+              <label class="block text-xs font-bold mb-1">Jenis Dokumen / Komunikasi</label>
+              <select id="m11-jenis" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="Surat Undangan Rapat Orang Tua / Wali">Surat Undangan</option>
+                <option value="Surat Pemberitahuan Kegiatan Sekolah">Surat Pemberitahuan</option>
+                <option value="Surat Tugas Guru / Pendamping Lomba">Surat Tugas</option>
+                <option value="Surat Izin Kegiatan Siswa">Surat Izin</option>
+                <option value="Pengumuman Resmi Sekolah">Pengumuman</option>
+                <option value="Berita Kegiatan Sekolah">Berita Kegiatan</option>
+                <option value="Laporan Pelaksanaan Kegiatan">Laporan Kegiatan</option>
+                <option value="Teks Sambutan Acara Sekolah">Sambutan</option>
+                <option value="Pesan Informasi Orang Tua (Format WhatsApp)">Pesan untuk Orang Tua</option>
+                <option value="Notulen Rapat Dewan Guru">Notulen Rapat</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Gaya Bahasa</label>
+              <select id="m11-gaya" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="Formal (Tata Naskah Dinas Sekolah)">Formal (Resmi Kedinasan)</option>
+                <option value="Semi-Formal (Hangat & Komunikatif)">Semi-Formal (Komunikatif)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Perihal / Topik Utama</label>
+              <input type="text" id="m11-perihal" value="Pertemuan Wali Murid & Sosialisasi Program Pembelajaran Semester" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Waktu, Tempat &amp; Rincian Penting</label>
+              <textarea id="m11-detail" rows="3" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">Hari Sabtu, 28 November 2026 pukul 08.30 WIB bertempat di Aula ${escapeHtml(p.sekolah)}.</textarea>
+            </div>
+            <button type="button" onclick="generateMenu11()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-600 to-navy-900 text-white font-display font-bold text-sm shadow-lg transition">
+              📨 Buat Dokumen Komunikasi
+            </button>
+          </div>
+          <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 min-h-[420px]">
+            <div id="m11-output-wrap">
+              <div class="h-80 flex flex-col items-center justify-center text-center text-slate-400 p-6">
+                <span class="text-4xl mb-3">✉️</span>
+                <p class="font-semibold text-slate-600 dark:text-slate-300">Surat Resmi, Pengumuman &amp; Pesan Orang Tua</p>
+                <p class="text-xs mt-1 max-w-md">Pilih jenis dokumen dan gaya bahasa formal atau semi-formal yang siap dicetak maupun disalin.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function generateMenu11() {
+      const jenis = document.getElementById('m11-jenis').value;
+      const gaya = document.getElementById('m11-gaya').value;
+      const perihal = document.getElementById('m11-perihal').value.trim();
+      const detail = document.getElementById('m11-detail').value.trim();
+      const p = APP_STATE.profile;
+      const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      let html = '';
+      if (jenis.includes('Pesan untuk Orang Tua')) {
+        html = `
+          <h1>PESAN KOMUNIKASI ORANG TUA / WALI MURID</h1>
+          <p><strong>Assalamu’alaikum Warahmatullahi Wabarakatuh / Salam Sejahtera,</strong></p>
+          <p>Yth. Bapak/Ibu Orang Tua/Wali Murid ${escapeHtml(p.kelas)} ${escapeHtml(p.sekolah)}.</p>
+          <p>Semoga Bapak/Ibu beserta keluarga senantiasa dalam keadaan sehat wal’afiat. Melalui pesan ini kami menginformasikan perihal <strong>${escapeHtml(perihal)}</strong> yang akan dilaksanakan pada:</p>
+          <p>📌 <strong>Rincian Pelaksanaan:</strong><br>${escapeHtml(detail)}</p>
+          <p>Besar harapan kami atas dukungan dan kerja sama Bapak/Ibu demi kelancaran proses belajar putra-putri kita. Terima kasih atas perhatiannya.</p>
+          <p>Hormat kami,<br><strong>${escapeHtml(p.nama)}</strong><br>Guru ${escapeHtml(p.kelas)} — ${escapeHtml(p.sekolah)}</p>
+        `;
+      } else {
+        html = `
+          <div style="text-align:center; border-bottom: 2px solid #0B1B36; padding-bottom: 8px; margin-bottom: 12px;">
+            <strong style="font-size: 13pt;">${escapeHtml(p.sekolah.toUpperCase())}</strong><br>
+            <span style="font-size: 9.5pt;">${escapeHtml(p.kota)} &bull; Tahun Pelajaran ${escapeHtml(p.tahun)}</span>
+          </div>
+          <p style="text-align:right;">${escapeHtml(p.kota)}, ${tgl}</p>
+          <table>
+            <tr><th style="width:18%;">Nomor</th><td>421.2 / 108 / ${new Date().getFullYear()}</td></tr>
+            <tr><th>Lampiran</th><td>-</td></tr>
+            <tr><th>Perihal</th><td><strong>${escapeHtml(perihal)}</strong></td></tr>
+          </table>
+          <p><strong>Kepada Yth.</strong><br>Bapak/Ibu Orang Tua / Wali Peserta Didik / Rekan Pendidik<br>di Tempat</p>
+          <p>Dengan hormat,</p>
+          <p>Sehubungan dengan agenda peningkatan mutu layanan pendidikan di <strong>${escapeHtml(p.sekolah)}</strong> (${escapeHtml(gaya)}), bersama ini kami menyampaikan informasi terkait <strong>${escapeHtml(perihal)}</strong> dengan rincian sebagai berikut:</p>
+          <p style="padding: 10px; background: #F8FAFC; border-left: 3px solid #0B1B36;">${escapeHtml(detail)}</p>
+          <p>Demikian dokumen <strong>${escapeHtml(jenis)}</strong> ini kami sampaikan. Atas perhatian dan kerja sama yang baik, kami ucapkan terima kasih.</p>
+        `;
+      }
+
+      const docTitle = `${jenis} - ${perihal}`;
+      document.getElementById('m11-output-wrap').innerHTML = renderResultToolbar('m11-doc-content', docTitle, 'Komunikasi Sekolah') +
+        `<div id="m11-doc-content" contenteditable="true" class="edu-doc outline-none">${html}</div>`;
+      addRecentHistory('Komunikasi Sekolah', docTitle);
+    }
+
+    /*************************************************************************
+     * 18. MENU 12: ASISTEN GURU AI (CHATBOT PENDIDIKAN)
+     *************************************************************************/
+    function renderMenu12AsistenChat(ws) {
+      const p = APP_STATE.profile;
+      const quickPrompts = [
+        'Berikan 3 ide ice breaking 5 menit untuk mencairkan suasana kelas',
+        'Bagaimana cara membantu siswa yang masih kesulitan memahami konsep dasar?',
+        'Buatkan ide proyek P5 / kokurikuler sederhana yang ramah lingkungan',
+        'Strategi manajemen kelas agar diskusi kelompok berjalan tertib dan aktif'
+      ];
+
+      ws.innerHTML = `
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden flex flex-col h-[76vh] min-h-[500px] shadow-sm">
+          <!-- Chat Header -->
+          <div class="px-5 py-3.5 bg-gradient-to-r from-navy-950 via-navy-900 to-turquoise-800 text-white flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-turquoise-500/20 border border-turquoise-400/40 flex items-center justify-center text-xl">🤖</div>
+              <div>
+                <h2 class="font-display font-extrabold text-base">Asisten Guru AI — Konsultan Pedagogi</h2>
+                <p class="text-[11px] text-turquoise-300">Konteks Aktif: ${escapeHtml(p.jenjang)} • ${escapeHtml(p.kelas)} • ${escapeHtml(p.mapel)}</p>
+              </div>
+            </div>
+            <button type="button" onclick="clearTeacherChat()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold">Reset Chat</button>
+          </div>
+
+          <!-- Messages Feed -->
+          <div id="chat-messages-feed" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-slate-50/70 dark:bg-slate-950/60">
+            ${APP_STATE.chatHistory.map((msg, idx) => renderChatBubble(msg, idx)).join('')}
+          </div>
+
+          <!-- Quick Prompts -->
+          <div class="px-4 py-2 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-2 overflow-x-auto">
+            ${quickPrompts.map(qp => `
+              <button type="button" onclick="sendChatPrompt('${escapeHtml(qp)}')" class="shrink-0 px-3 py-1.5 rounded-full bg-turquoise-50 dark:bg-turquoise-900/30 text-turquoise-800 dark:text-turquoise-300 border border-turquoise-200 dark:border-turquoise-800 text-xs font-medium hover:bg-turquoise-100 transition">
+                ✨ ${escapeHtml(qp)}
+              </button>
+            `).join('')}
+          </div>
+
+          <!-- Chat Input -->
+          <form onsubmit="handleChatSubmit(event)" class="p-3 sm:p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2">
+            <input type="text" id="chat-user-input" placeholder="Tanyakan ide pembelajaran, solusi kelas, atau penjelasan materi..." class="flex-1 px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-turquoise-500 outline-none text-sm" />
+            <button type="submit" class="px-5 py-3 rounded-2xl bg-navy-900 hover:bg-navy-800 dark:bg-turquoise-600 text-white font-display font-bold text-sm shadow transition shrink-0">
+              Kirim &rarr;
+            </button>
+          </form>
+        </div>
+      `;
+      scrollChatBottom();
+    }
+
+    function renderChatBubble(msg, idx) {
+      const isUser = msg.role === 'user';
+      return `
+        <div class="flex ${isUser ? 'justify-end' : 'justify-start'}">
+          <div class="max-w-[85%] sm:max-w-2xl rounded-2xl p-4 shadow-xs ${isUser ? 'bg-navy-900 text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800'}">
+            <div class="flex items-center justify-between gap-4 mb-1.5 text-[11px] ${isUser ? 'text-turquoise-300' : 'text-slate-400'}">
+              <span class="font-bold">${isUser ? escapeHtml(APP_STATE.profile.nama) : '🤖 Asisten Guru AI'}</span>
+              <span>${escapeHtml(msg.time || '')}</span>
+            </div>
+            <div class="text-xs sm:text-sm leading-relaxed whitespace-pre-line">${escapeHtml(msg.text)}</div>
+            ${!isUser ? `
+              <div class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                <button type="button" onclick="copyChatMessage(${idx})" class="text-[11px] font-bold text-turquoise-700 dark:text-turquoise-400 hover:underline">📋 Salin Jawaban</button>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function copyChatMessage(idx) {
+      const msg = APP_STATE.chatHistory[idx];
+      if (msg) copyTextToClipboard(msg.text, 'Jawaban AI disalin!');
+    }
+
+    function scrollChatBottom() {
+      const feed = document.getElementById('chat-messages-feed');
+      if (feed) feed.scrollTop = feed.scrollHeight;
+    }
+
+    function clearTeacherChat() {
+      APP_STATE.chatHistory = [APP_STATE.chatHistory[0]];
+      safeStorageSet('gma_chat_history', JSON.stringify(APP_STATE.chatHistory));
+      renderMenu12AsistenChat(document.getElementById('main-workspace'));
+    }
+
+    function sendChatPrompt(text) {
+      const inp = document.getElementById('chat-user-input');
+      if (inp) {
+        inp.value = text;
+        handleChatSubmit(new Event('submit'));
+      }
+    }
+
+    async function handleChatSubmit(e) {
+      e.preventDefault();
+      const inp = document.getElementById('chat-user-input');
+      const text = (inp?.value || '').trim();
+      if (!text) return;
+      inp.value = '';
+
+      const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      APP_STATE.chatHistory.push({ role: 'user', time: now, text });
+      renderMenu12AsistenChat(document.getElementById('main-workspace'));
+
+      const p = APP_STATE.profile;
+      const rule = JENJANG_RULES[p.jenjang] || JENJANG_RULES['SD/MI'];
+
+      const replyText = await callAiService(
+        `Anda adalah Asisten Guru AI untuk jenjang ${p.jenjang} kelas ${p.kelas} mapel ${p.mapel}. Jawab pertanyaan guru secara praktis, hangat, dan terstruktur tanpa tag HTML: ${text}`,
+        () => {
+          return `Rekomendasi Strategi untuk Jenjang ${p.jenjang} (${p.kelas} — ${p.mapel}):\n\n` +
+            `Menanggapi pertanyaan Bapak/Ibu tentang "${text}", berikut 3 langkah praktis yang dapat langsung diterapkan di kelas:\n\n` +
+            `1. Aktivasi & Pemantik Kontekstual:\nMulailah dengan menghubungkan topik dengan pengalaman nyata peserta didik (${rule.bahasa}). Berikan pertanyaan terbuka yang memicu rasa ingin tahu selama 3–5 menit.\n\n` +
+            `2. Aktivitas Inti Terdiferensiasi:\nTerapkan pendekatan ${rule.pendekatan}. Bagi murid dalam kelompok kecil (3–4 orang) dengan peran yang jelas (pencatat, pengamat, penyaji) agar semua aktif terlibat.\n\n` +
+            `3. Penguatan & Refleksi Cepat:\nAkhiri sesi dengan kuis interaktif singkat atau kartu refleksi "1 Hal Baru yang Kupahami Hari Ini" untuk memetakan pemahaman siswa secara langsung.`;
+        }
+      );
+
+      const cleanReply = replyText.replace(/<[^>]+>/g, ' ').replace(/\s{2,}/g, '\n').trim();
+      APP_STATE.chatHistory.push({
+        role: 'ai',
+        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        text: cleanReply
+      });
+      safeStorageSet('gma_chat_history', JSON.stringify(APP_STATE.chatHistory));
+      renderMenu12AsistenChat(document.getElementById('main-workspace'));
+    }
+
+    /*************************************************************************
+     * 19. KOLEKSI SAYA (ARSIP DOKUMEN GURU)
+     *************************************************************************/
+    function renderKoleksiSaya(ws) {
+      ws.innerHTML = `
+        <div class="space-y-5">
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h2 class="font-display font-extrabold text-lg">📁 Koleksi Dokumen Saya (${APP_STATE.collections.length})</h2>
+                <p class="text-xs text-slate-500">Buka kembali, edit, salin, cetak ke PDF, atau unduh ke Word kapan saja.</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <input type="text" id="col-search" oninput="filterCollections()" placeholder="Cari judul dokumen..." class="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              <select id="col-cat" onchange="filterCollections()" class="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="">Semua Kategori</option>
+                <option value="Perangkat Pembelajaran">Perangkat Pembelajaran</option>
+                <option value="Bank Soal & Asesmen">Bank Soal &amp; Asesmen</option>
+                <option value="LKPD">LKPD</option>
+                <option value="Presentasi AI">Presentasi AI</option>
+                <option value="Cerita & Video">Cerita &amp; Video</option>
+                <option value="Raport Siswa">Raport Siswa</option>
+                <option value="Komunikasi Sekolah">Komunikasi Sekolah</option>
+              </select>
+              <input type="date" id="col-date" onchange="filterCollections()" class="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+          </div>
+
+          <div id="col-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+      `;
+      filterCollections();
+    }
+
+    function filterCollections() {
+      const q = (document.getElementById('col-search')?.value || '').toLowerCase();
+      const cat = document.getElementById('col-cat')?.value || '';
+      const dt = document.getElementById('col-date')?.value || '';
+      const list = document.getElementById('col-list');
+      if (!list) return;
+
+      const items = APP_STATE.collections.filter(it => {
+        const matchQ = !q || it.title.toLowerCase().includes(q);
+        const matchC = !cat || it.category === cat;
+        const matchD = !dt || it.date === dt;
+        return matchQ && matchC && matchD;
+      });
+
+      if (items.length === 0) {
+        list.innerHTML = `<div class="md:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center text-slate-400 text-sm">Belum ada dokumen tersimpan yang cocok. Buat perangkat ajar, soal, atau LKPD lalu klik tombol <strong>Simpan</strong>.</div>`;
+        return;
+      }
+
+      list.innerHTML = items.map(it => `
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between gap-2 text-[11px] mb-1.5">
+              <span class="px-2.5 py-0.5 rounded-full bg-turquoise-100 dark:bg-turquoise-900/40 text-turquoise-800 dark:text-turquoise-300 font-bold">${escapeHtml(it.category)}</span>
+              <span class="text-slate-400">${escapeHtml(it.createdAt || it.date)}</span>
+            </div>
+            <h3 class="font-display font-bold text-base">${escapeHtml(it.title)}</h3>
+            <p class="text-xs text-slate-500 mt-1">Jenjang: ${escapeHtml(it.jenjang || '-')}</p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-2">
+            <button type="button" onclick="openSavedCollectionModal('${it.id}')" class="px-3.5 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold">📖 Buka &amp; Edit</button>
+            <button type="button" onclick="deleteSavedCollection('${it.id}')" class="px-3.5 py-2 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold">🗑️ Hapus</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openSavedCollectionModal(docId) {
+      const it = APP_STATE.collections.find(x => x.id === docId);
+      if (!it) return;
+      openModal({
+        title: it.title,
+        bodyHtml: `<div id="modal-saved-doc" contenteditable="true" class="edu-doc outline-none">${it.htmlContent}</div>`,
+        footerHtml: `
+          <button type="button" onclick="updateSavedCollection('${it.id}')" class="px-4 py-2 rounded-xl bg-turquoise-600 text-white text-xs font-bold">💾 Simpan Perubahan</button>
+          <button type="button" onclick="copyElementContent('modal-saved-doc')" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold">📋 Salin</button>
+          <button type="button" onclick="printDocumentElement('modal-saved-doc', '${escapeHtml(it.title)}')" class="px-4 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold">🖨️ Cetak / PDF</button>
+          <button type="button" onclick="downloadDocxElement('modal-saved-doc', '${escapeHtml(it.title)}')" class="px-4 py-2 rounded-xl bg-gold-500 text-navy-950 text-xs font-bold">📥 Word</button>
+        `
+      });
+    }
+
+    function updateSavedCollection(docId) {
+      const idx = APP_STATE.collections.findIndex(x => x.id === docId);
+      const el = document.getElementById('modal-saved-doc');
+      if (idx !== -1 && el) {
+        APP_STATE.collections[idx].htmlContent = el.innerHTML;
+        safeStorageSet('gma_collections', JSON.stringify(APP_STATE.collections));
+        showToast('Perubahan dokumen berhasil diperbarui!', 'success');
+        closeModal();
+      }
+    }
+
+    function deleteSavedCollection(docId) {
+      APP_STATE.collections = APP_STATE.collections.filter(x => x.id !== docId);
+      safeStorageSet('gma_collections', JSON.stringify(APP_STATE.collections));
+      updateCollectionBadge();
+      renderSidebar();
+      filterCollections();
+      showToast('Dokumen dihapus dari Koleksi Saya.', 'info');
+    }
+
+    /*************************************************************************
+     * 20. DEVELOPER PHOTO & MODALS (TENTANG, PENGATURAN AI, BANTUAN)
+     *************************************************************************/
+    function getDeveloperSvgFallback(uid, w, h) {
+      const gradId = 'studioBg_' + (uid || 'default') + '_' + Math.floor(Math.random() * 10000);
+      return `
+        <svg viewBox="0 0 160 200" width="${w || 64}" height="${h || 80}" style="display:block;width:100%;height:100%;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Potret Eti, S.Pd.SD">
+          <defs>
+            <linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#4B79AA"/>
+              <stop offset="50%" stop-color="#7EA6CF"/>
+              <stop offset="100%" stop-color="#355C87"/>
+            </linearGradient>
+          </defs>
+          <rect width="160" height="200" fill="url(#${gradId})"/>
+          <path d="M10 200 C15 152, 42 140, 80 140 C118 140, 145 152, 150 200 Z" fill="#FFFFFF"/>
+          <path d="M16 200 C22 160, 46 146, 80 146 C114 146, 138 160, 144 200 Z" fill="#182232" opacity="0.88"/>
+          <path d="M35 92 C33 40, 54 20, 80 20 C106 20, 127 40, 125 92 C124 132, 114 158, 80 178 C46 158, 36 132, 35 92 Z" fill="#111827"/>
+          <path d="M50 74 C50 47, 110 47, 110 74 C110 105, 96 123, 80 123 C64 123, 50 105, 50 74 Z" fill="#F6CEB4"/>
+          <circle cx="66" cy="79" r="3.4" fill="#1F2937"/>
+          <circle cx="94" cy="79" r="3.4" fill="#1F2937"/>
+          <rect x="54" y="71" width="23" height="15" rx="5" fill="none" stroke="#5C2E16" stroke-width="2.4"/>
+          <rect x="83" y="71" width="23" height="15" rx="5" fill="none" stroke="#5C2E16" stroke-width="2.4"/>
+          <path d="M77 78 L83 78" stroke="#5C2E16" stroke-width="2.4"/>
+          <path d="M69 104 Q80 112 91 104" stroke="#D46A6A" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+          <circle cx="46" cy="134" r="5" fill="#FBBF24"/>
+        </svg>
+      `;
+    }
+
+    function getDeveloperAvatarMarkup(uid, w, h) {
+      const photoSrc = APP_STATE.developer.photoDataUrl || APP_STATE.developer.defaultPhotoUrl;
+      if (photoSrc) {
+        return `<img src="${escapeHtml(photoSrc)}" referrerpolicy="no-referrer" alt="Foto Pengembang ${escapeHtml(APP_STATE.developer.name)}" onerror="handleDevImgError(this, '${uid || 'err'}', ${w || 64}, ${h || 80})" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top;" />`;
+      }
+      return getDeveloperSvgFallback(uid, w, h);
+    }
+
+    function handleDevImgError(imgEl, uid, w, h) {
+      if (imgEl && imgEl.parentElement) {
+        imgEl.parentElement.innerHTML = getDeveloperSvgFallback(uid, w, h);
+      }
+    }
+
+    function renderDeveloperPhotoSlots() {
+      document.querySelectorAll('.dev-photo-slot').forEach((slot, idx) => {
+        const w = parseInt(slot.getAttribute('data-w') || '64', 10);
+        const h = parseInt(slot.getAttribute('data-h') || '80', 10);
+        slot.innerHTML = getDeveloperAvatarMarkup('slot_' + idx, w, h);
+      });
+    }
+
+    function triggerDeveloperPhotoPicker(event) {
+      if (event) event.stopPropagation();
+      const input = document.getElementById('global-dev-photo-input');
+      if (input) {
+        input.value = '';
+        input.click();
+      }
+    }
+
+    function applyCompressedImageFromBlobOrFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const rawUrl = e.target?.result || '';
+        if (!rawUrl) return;
+        const img = new Image();
+        img.onload = function() {
+          const maxW = 320;
+          const scale = img.width > maxW ? (maxW / img.width) : 1;
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(img.width * scale));
+          canvas.height = Math.max(1, Math.round(img.height * scale));
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          APP_STATE.developer.photoDataUrl = compressedDataUrl;
+          safeStorageSet('gma_dev_photo', compressedDataUrl);
+          renderDeveloperPhotoSlots();
+          showToast('Foto Eti, S.Pd.SD berhasil diperbarui!', 'success');
+        };
+        img.src = rawUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateDeveloperPhotoFile(event) {
+      const file = event?.target?.files?.[0];
+      if (file) applyCompressedImageFromBlobOrFile(file);
+    }
+
+    function saveDeveloperPhotoFromUrl() {
+      const input = document.getElementById('dev-photo-url-input');
+      if (!input) return;
+      let url = input.value.trim();
+      if (!url) {
+        showToast('Masukkan tautan (URL) foto terlebih dahulu.', 'error');
+        return;
+      }
+      const gdMatch = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([a-zA-Z0-9_-]+)/);
+      if (gdMatch && gdMatch[1]) {
+        url = 'https://lh3.googleusercontent.com/d/' + gdMatch[1];
+      }
+      APP_STATE.developer.photoDataUrl = url;
+      safeStorageSet('gma_dev_photo', url);
+      renderDeveloperPhotoSlots();
+      showToast('Tautan foto Eti, S.Pd.SD berhasil diterapkan!', 'success');
+    }
+
+    function resetDeveloperPhoto() {
+      APP_STATE.developer.photoDataUrl = DEV_DEFAULT_PHOTO;
+      safeStorageSet('gma_dev_photo', DEV_DEFAULT_PHOTO);
+      renderDeveloperPhotoSlots();
+      showToast('Foto dikembalikan ke foto resmi Eti, S.Pd.SD.', 'info');
+    }
+
+    function openAboutModal() {
+      const dev = APP_STATE.developer;
+      openModal({
+        title: 'Tentang GURU MASTER AI & Pengembang',
+        bodyHtml: `
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-navy-950 via-navy-900 to-navy-800 text-white border border-gold-400/40 flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              <div class="flex flex-col items-center gap-2 shrink-0">
+                <div data-w="96" data-h="112" class="dev-photo-slot w-24 h-28 rounded-2xl overflow-hidden border-2 border-gold-400 shadow-xl bg-sky-700">
+                  ${getDeveloperAvatarMarkup('modal', 96, 112)}
+                </div>
+                <button type="button" onclick="triggerDeveloperPhotoPicker(event)" class="text-[11px] bg-gold-500 hover:bg-gold-400 text-navy-950 px-3 py-1.5 rounded-lg font-bold transition shadow">
+                  📷 Ganti Foto
+                </button>
+              </div>
+              <div class="text-center sm:text-left space-y-1.5 flex-1 w-full">
+                <span class="inline-block px-2.5 py-0.5 rounded-full bg-gold-500 text-navy-950 text-[11px] font-extrabold uppercase tracking-wide">Profil Pengembang</span>
+                <h4 class="font-display font-extrabold text-xl text-white">${escapeHtml(dev.name)}</h4>
+                <div class="text-xs font-semibold text-turquoise-300">${escapeHtml(dev.role)}</div>
+                <p class="text-xs text-slate-200 leading-relaxed pt-1">${escapeHtml(dev.bio)}</p>
+
+                <div class="pt-2.5 mt-2 border-t border-white/15 space-y-2 text-left">
+                  <div class="text-[11px] font-semibold text-gold-300">Ganti via Tautan Gambar / Google Drive:</div>
+                  <div class="flex flex-col sm:flex-row gap-1.5">
+                    <input type="text" id="dev-photo-url-input" placeholder="Tempel link foto..." class="flex-1 px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 text-white placeholder-slate-400 text-xs outline-none focus:border-turquoise-400" />
+                    <button type="button" onclick="saveDeveloperPhotoFromUrl()" class="px-3 py-1.5 rounded-lg bg-turquoise-500 hover:bg-turquoise-400 text-navy-950 font-bold text-xs shrink-0">Terapkan</button>
+                    <button type="button" onclick="resetDeveloperPhoto()" class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 text-xs shrink-0">Default</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-turquoise-50 dark:bg-turquoise-950/40 border border-turquoise-200 dark:border-turquoise-800">
+              <div class="font-display font-extrabold text-base text-navy-900 dark:text-gold-400">GURU MASTER AI</div>
+              <div class="text-xs font-semibold text-turquoise-700 dark:text-turquoise-300">“Satu Aplikasi, Sejuta Solusi untuk Guru.”</div>
+              <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-1.5">Ekosistem asisten digital pendidikan berbasis kecerdasan buatan yang dirancang khusus untuk mendampingi guru Indonesia di jenjang <strong>PAUD/TK, SD/MI, SMP/MTs, SMA/MA, SMK, dan SLB</strong>.</p>
+            </div>
+          </div>
+        `,
+        footerHtml: `<button type="button" onclick="closeModal()" class="px-5 py-2.5 rounded-xl bg-navy-900 text-white text-xs font-bold">Mengerti</button>`
+      });
+    }
+
+    function openSettingsModal() {
+      openModal({
+        title: '⚙️ Pengaturan Aplikasi & Integrasi AI',
+        bodyHtml: `
+          <div class="space-y-4 text-sm">
+            <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200">
+              🔐 <strong>Keamanan API Key:</strong> Kunci API tidak pernah ditanam di dalam kode sumber publik. Jika Anda memiliki kunci Gemini API sendiri, Anda dapat menyimpannya secara lokal di sesi browser ini, atau langsung menggunakan Mesin Pedagogis Cerdas bawaan tanpa API Key.
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Gemini API Key (Opsional)</label>
+              <input type="password" id="set-api-key" value="${escapeHtml(APP_STATE.customApiKey)}" placeholder="AIzaSy..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Model AI</label>
+              <select id="set-ai-model" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="gemini-2.5-flash" ${APP_STATE.aiModel === 'gemini-2.5-flash' ? 'selected' : ''}>Gemini 2.5 Flash (Cepat & Efisien)</option>
+                <option value="gemini-2.5-pro" ${APP_STATE.aiModel === 'gemini-2.5-pro' ? 'selected' : ''}>Gemini 2.5 Pro (Analisis Mendalam)</option>
+              </select>
+            </div>
+          </div>
+        `,
+        footerHtml: `
+          <button type="button" onclick="saveSettingsModal()" class="px-5 py-2.5 rounded-xl bg-turquoise-600 text-white text-xs font-bold">Simpan Pengaturan</button>
+          <button type="button" onclick="closeModal()" class="px-4 py-2.5 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold">Batal</button>
+        `
+      });
+    }
+
+    function saveSettingsModal() {
+      APP_STATE.customApiKey = (document.getElementById('set-api-key')?.value || '').trim();
+      APP_STATE.aiModel = document.getElementById('set-ai-model')?.value || 'gemini-2.5-flash';
+      safeStorageSet('gma_api_key', APP_STATE.customApiKey);
+      safeStorageSet('gma_ai_model', APP_STATE.aiModel);
+      APP_STATE.aiStatus = APP_STATE.customApiKey ? 'Terhubung Gemini API' : 'Mesin Pedagogis & AI Aktif';
+      closeModal();
+      showToast('Pengaturan berhasil disimpan!', 'success');
+      if (APP_STATE.activeRoute === 'dashboard') renderDashboard(document.getElementById('main-workspace'));
+    }
+
+    function openHelpModal() {
+      openModal({
+        title: '❓ Panduan Cepat Penggunaan GURU MASTER AI',
+        bodyHtml: `
+          <div class="space-y-3 text-xs sm:text-sm leading-relaxed">
+            <p><strong>1. Atur Profil &amp; Jenjang:</strong> Klik <em>Edit Profil</em> untuk memilih jenjang (PAUD/TK, SD/MI, SMP/MTs, SMA/MA, SMK, atau SLB). Seluruh generator otomatis menyesuaikan bahasa dan tingkat kognitif.</p>
+            <p><strong>2. Pilih 12 Layanan Utama:</strong> Gunakan menu di sisi kiri (atau tombol <em>Semua Menu</em> di pojok kanan bawah HP) untuk membuat Modul Ajar, Bank Soal, LKPD, Game Edukasi, Presentasi, Raport, Administrasi, dan lainnya.</p>
+            <p><strong>3. Edit Langsung &amp; Ekspor:</strong> Setiap dokumen hasil generator dapat diklik langsung untuk diedit teksnya, disimpan ke <strong>Koleksi Saya</strong>, disalin, dicetak ke PDF A4, atau diunduh ke Word (<code>.doc</code>).</p>
+          </div>
+        `
+      });
+    }
+
+    /*************************************************************************
+     * 21. INITIALIZATION ON PAGE LOAD
+     *************************************************************************/
+    document.addEventListener('DOMContentLoaded', () => {
+      applyTheme();
+      renderDeveloperPhotoSlots();
+      updateCollectionBadge();
+    });
+  </script>
+</body>
+</html>
