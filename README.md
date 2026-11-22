@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
@@ -483,6 +483,10 @@
             <span id="topbar-collection-count" class="bg-turquoise-600 text-white px-1.5 py-0.5 rounded-full text-[10px]">0</span>
           </button>
 
+          <button type="button" onclick="navigateTo('unduh')" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-gold-100 dark:bg-amber-900/40 text-amber-900 dark:text-gold-300 border border-gold-300 dark:border-amber-700 hover:bg-gold-200 transition" title="Menu Unduh File & Ekspor">
+            <span>📥 Unduh File</span>
+          </button>
+
           <button type="button" onclick="openHelpModal()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition" title="Panduan Penggunaan">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </button>
@@ -877,6 +881,156 @@
       showToast('Berkas Word (.doc) berhasil diunduh!', 'success');
     }
 
+    function triggerBlobDownload(blob, fullFilename, successMsg) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fullFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      if (successMsg) showToast(successMsg, 'success');
+    }
+
+    function sanitizeFilename(name) {
+      return (name || 'Dokumen_Guru_Master_AI').replace(/[^a-zA-Z0-9_-]/g, '_').replace(/_+/g, '_');
+    }
+
+    function toggleDownloadDropdown(menuId, event) {
+      if (event) event.stopPropagation();
+      const target = document.getElementById(menuId);
+      document.querySelectorAll('.download-dropdown-menu').forEach(el => {
+        if (el.id !== menuId) el.classList.add('hidden');
+      });
+      if (target) target.classList.toggle('hidden');
+    }
+
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.download-dropdown-menu').forEach(el => el.classList.add('hidden'));
+    });
+
+    function downloadHtmlElement(elementId, filename = 'Dokumen_Guru_Master_AI') {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const p = APP_STATE.profile;
+      const fullHtml = `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escapeHtml(filename)}</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 840px; margin: 24px auto; padding: 24px; color: #0f172a; line-height: 1.6; }
+    .kop { text-align: center; border-bottom: 3px double #0B1B36; padding-bottom: 10px; margin-bottom: 18px; }
+    h1 { font-size: 18pt; color: #0B1B36; border-bottom: 2px solid #0D9488; padding-bottom: 4px; }
+    h2 { font-size: 13pt; color: #0F766E; margin-top: 18px; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 10.5pt; }
+    th, td { border: 1px solid #94a3b8; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f1f5f9; color: #0B1B36; }
+    .ttd { width: 100%; margin-top: 32px; border: none; }
+    .ttd td { border: none; width: 50%; text-align: center; }
+    @media print { body { margin: 0; padding: 12mm; } }
+  </style>
+</head>
+<body>
+  <div class="kop">
+    <strong style="font-size:15pt;">${escapeHtml(p.sekolah)}</strong><br>
+    <span>${escapeHtml(p.kota)} — Tahun Pelajaran ${escapeHtml(p.tahun)}</span>
+  </div>
+  ${el.innerHTML}
+  <table class="ttd">
+    <tr>
+      <td>Mengetahui,<br>Kepala ${escapeHtml(p.sekolah)}<br><br><br><br><u>........................................</u></td>
+      <td>${escapeHtml(p.kota)}, ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}<br>Guru Pengampu<br><br><br><br><u><strong>${escapeHtml(p.nama)}</strong></u><br>${escapeHtml(p.nip || '')}</td>
+    </tr>
+  </table>
+</body>
+</html>`;
+      const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+      triggerBlobDownload(blob, sanitizeFilename(filename) + '.html', 'Berkas HTML (.html) berhasil diunduh!');
+    }
+
+    function downloadTxtElement(elementId, filename = 'Dokumen_Guru_Master_AI') {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const p = APP_STATE.profile;
+      const header = `${p.sekolah.toUpperCase()}\n${p.kota} - Tahun Pelajaran ${p.tahun}\n==================================================\n\n`;
+      const footer = `\n\n==================================================\nDisusun oleh: ${p.nama}${p.nip ? ' (NIP. ' + p.nip + ')' : ''}\nTanggal Unduh: ${new Date().toLocaleDateString('id-ID')}`;
+      const plainText = header + (el.innerText || el.textContent || '').trim() + footer;
+      const blob = new Blob([plainText], { type: 'text/plain;charset=utf-8' });
+      triggerBlobDownload(blob, sanitizeFilename(filename) + '.txt', 'Berkas Teks (.txt) berhasil diunduh!');
+    }
+
+    function downloadCsvAdmin(tab) {
+      const rows = APP_STATE.adminData[tab] || [];
+      if (rows.length === 0) {
+        showToast('Belum ada data pada tab administrasi ini untuk diunduh.', 'error');
+        return;
+      }
+      const keys = Object.keys(rows[0]).filter(k => k !== 'id');
+      const escapeCsv = (val) => `"${String(val ?? '').replace(/"/g, '""')}"`;
+      const csvLines = [
+        keys.map(k => escapeCsv(k.toUpperCase())).join(','),
+        ...rows.map(r => keys.map(k => escapeCsv(r[k])).join(','))
+      ];
+      const blob = new Blob(['\ufeff' + csvLines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      triggerBlobDownload(blob, `Administrasi_${sanitizeFilename(tab)}_${sanitizeFilename(APP_STATE.profile.kelas)}.csv`, 'Rekap Excel/CSV (.csv) berhasil diunduh!');
+    }
+
+    function downloadAppHtmlFile() {
+      const docHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      const blob = new Blob([docHtml], { type: 'text/html;charset=utf-8' });
+      triggerBlobDownload(blob, 'Guru_Master_AI_Offline.html', 'File aplikasi Guru_Master_AI_Offline.html berhasil diunduh!');
+    }
+
+    function downloadFullBackupJson() {
+      const payload = {
+        app: 'GURU MASTER AI',
+        exportedAt: new Date().toISOString(),
+        profile: APP_STATE.profile,
+        collections: APP_STATE.collections,
+        adminData: APP_STATE.adminData,
+        learnedModules: APP_STATE.learnedModules
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+      triggerBlobDownload(blob, `Backup_Guru_Master_AI_${new Date().toISOString().slice(0, 10)}.json`, 'Cadangan data (.json) berhasil diunduh!');
+    }
+
+    function restoreFullBackupJson(event) {
+      const file = event?.target?.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target?.result || '{}');
+          if (parsed.profile) {
+            APP_STATE.profile = parsed.profile;
+            safeStorageSet('gma_profile', JSON.stringify(APP_STATE.profile));
+          }
+          if (Array.isArray(parsed.collections)) {
+            APP_STATE.collections = parsed.collections;
+            safeStorageSet('gma_collections', JSON.stringify(APP_STATE.collections));
+          }
+          if (parsed.adminData && typeof parsed.adminData === 'object') {
+            APP_STATE.adminData = parsed.adminData;
+            safeStorageSet('gma_admin_data', JSON.stringify(APP_STATE.adminData));
+          }
+          if (Array.isArray(parsed.learnedModules)) {
+            APP_STATE.learnedModules = parsed.learnedModules;
+            safeStorageSet('gma_learned_modules', JSON.stringify(APP_STATE.learnedModules));
+          }
+          syncProfileUI();
+          renderSidebar();
+          if (APP_STATE.activeRoute === 'unduh') renderMenuUnduhFile(document.getElementById('main-workspace'));
+          showToast('Data cadangan berhasil dipulihkan!', 'success');
+        } catch (err) {
+          showToast('Format berkas JSON tidak valid.', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
     function saveToCollection({ title, category, htmlContent }) {
       const item = {
         id: 'doc_' + Date.now(),
@@ -1002,6 +1156,10 @@
           <span class="flex items-center gap-3 truncate"><span class="text-base">📁</span><span>Koleksi Saya</span></span>
           <span class="text-[11px] px-2 py-0.5 rounded-full ${active === 'koleksi' ? 'bg-navy-900 text-gold-400' : 'bg-white/10 text-turquoise-300'}">${APP_STATE.collections.length}</span>
         </button>
+        <button type="button" onclick="navigateTo('unduh')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${linkClass('unduh')}">
+          <span class="flex items-center gap-3 truncate"><span class="text-base">📥</span><span>Unduh File</span></span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full ${active === 'unduh' ? 'bg-navy-900 text-gold-400' : 'bg-gold-500/20 text-gold-300'}">Ekspor</span>
+        </button>
         <div class="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">12 Layanan Utama Guru</div>
       `;
 
@@ -1050,6 +1208,10 @@
         titleEl.textContent = 'Koleksi Saya';
         subEl.textContent = 'Arsip dokumen pembelajaran, soal, LKPD, dan surat tersimpan';
         renderKoleksiSaya(ws);
+      } else if (routeId === 'unduh') {
+        titleEl.textContent = '📥 Pusat Unduh File & Ekspor';
+        subEl.textContent = 'Unduh dokumen Word, HTML, Teks, Excel CSV, Backup Data & Aplikasi Offline';
+        renderMenuUnduhFile(ws);
       } else {
         const menuObj = MENU_ITEMS.find(x => x.id === routeId);
         if (menuObj) {
@@ -1104,6 +1266,7 @@
     }
 
     function renderResultToolbar(containerId, docTitle, category, extraControlsHtml = '') {
+      const ddId = 'dd_' + containerId + '_' + Math.floor(Math.random() * 10000);
       return `
         <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-200 dark:border-slate-700 no-print">
           <div class="flex items-center gap-2">
@@ -1116,285 +1279,28 @@
             <button type="button" onclick="saveDocumentById('${containerId}', '${escapeHtml(docTitle)}', '${escapeHtml(category)}')" class="px-3 py-1.5 rounded-xl bg-turquoise-600 hover:bg-turquoise-500 text-white text-xs font-bold transition">💾 Simpan</button>
             <button type="button" onclick="copyElementContent('${containerId}')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-bold transition">📋 Salin</button>
             <button type="button" onclick="printDocumentElement('${containerId}', '${escapeHtml(docTitle)}')" class="px-3 py-1.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold transition">🖨️ Cetak / PDF</button>
-            <button type="button" onclick="downloadDocxElement('${containerId}', '${escapeHtml(docTitle)}')" class="px-3 py-1.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 text-xs font-bold transition">📥 Word (.doc)</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function saveDocumentById(elementId, title, category) {
-      const el = document.getElementById(elementId);
-      if (!el) return;
-      saveToCollection({ title, category, htmlContent: el.innerHTML });
-    }
-
-    /*************************************************************************
-     * 6. DASHBOARD UTAMA
-     *************************************************************************/
-    function renderDashboard(ws) {
-      const p = APP_STATE.profile;
-      const rule = JENJANG_RULES[p.jenjang] || JENJANG_RULES['SD/MI'];
-      const tip = TEACHING_TIPS[APP_STATE.tipIndex % TEACHING_TIPS.length];
-
-      const topUsedIds = Object.entries(APP_STATE.usageCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 4)
-        .map(([id]) => MENU_ITEMS.find(m => m.id === id))
-        .filter(Boolean);
-
-      ws.innerHTML = `
-        <div class="space-y-6">
-          <!-- Welcome Banner -->
-          <div class="bg-gradient-to-r from-navy-950 via-navy-900 to-turquoise-800 rounded-3xl p-5 sm:p-7 text-white shadow-xl relative overflow-hidden">
-            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-              <div class="space-y-2">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-gold-400 text-xs font-bold">
-                  <span>👋 Selamat Datang di Ekosistem Pendidik Cerdas</span>
-                </div>
-                <h2 class="font-display font-extrabold text-2xl sm:text-3xl">Halo, ${escapeHtml(p.nama)}!</h2>
-                <p class="text-sm text-slate-200">
-                  <strong>${escapeHtml(p.sekolah)}</strong> &bull; Jenjang <strong>${escapeHtml(p.jenjang)}</strong> (${escapeHtml(p.kelas)}) &bull; Mapel <strong>${escapeHtml(p.mapel)}</strong>
-                </p>
-                <p class="text-xs text-turquoise-300 max-w-2xl">
-                  Mode Adaptif Aktif: ${escapeHtml(rule.pendekatan)}
-                </p>
-              </div>
-              <div class="flex flex-wrap gap-2.5 shrink-0">
-                <button type="button" onclick="switchView('view-profile')" class="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition">
-                  ✏️ Ubah Profil / Jenjang
-                </button>
-                <button type="button" onclick="navigateTo('menu-12')" class="px-4 py-2.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 text-xs font-extrabold shadow-lg transition">
-                  🤖 Tanya Asisten AI
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Search Bar & Quick Stats -->
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-            <div class="lg:col-span-8 relative">
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
-              <input type="text" id="dashboard-search-input" oninput="filterDashboardMenus(this.value)" placeholder="Cari layanan guru (contoh: Modul Ajar, Soal HOTS, LKPD, Game, Raport, Surat)..." class="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs focus:ring-2 focus:ring-turquoise-500 outline-none text-sm" />
-            </div>
-            <div class="lg:col-span-4 grid grid-cols-2 gap-3">
-              <div onclick="navigateTo('koleksi')" class="cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 flex items-center gap-3 hover:border-turquoise-500 transition">
-                <div class="w-10 h-10 rounded-xl bg-turquoise-100 dark:bg-turquoise-900/40 text-turquoise-700 dark:text-turquoise-300 flex items-center justify-center font-bold">📁</div>
-                <div>
-                  <div class="font-display font-extrabold text-lg">${APP_STATE.collections.length}</div>
-                  <div class="text-[11px] text-slate-500">Dokumen Tersimpan</div>
-                </div>
-              </div>
-              <div onclick="navigateTo('menu-8')" class="cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 flex items-center gap-3 hover:border-gold-500 transition">
-                <div class="w-10 h-10 rounded-xl bg-gold-100 dark:bg-amber-900/40 text-amber-700 dark:text-gold-400 flex items-center justify-center font-bold">🗂️</div>
-                <div>
-                  <div class="font-display font-extrabold text-lg">${APP_STATE.adminData.jurnal.length}</div>
-                  <div class="text-[11px] text-slate-500">Jurnal Mengajar</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 12 Menu Layanan Utama -->
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="font-display font-extrabold text-lg text-navy-900 dark:text-white">12 Layanan Utama Guru Master AI</h3>
-              <span class="text-xs text-slate-500">Klik kartu untuk membuka layanan</span>
-            </div>
-            <div id="dashboard-menu-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-              ${MENU_ITEMS.map(m => `
-                <button type="button" data-search="${escapeHtml((m.title + ' ' + m.short + ' ' + m.badge).toLowerCase())}" onclick="navigateTo('${m.id}')" class="dashboard-menu-card group text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-turquoise-500 dark:hover:border-turquoise-400 rounded-2xl p-4 shadow-xs hover:shadow-lg transition transform hover:-translate-y-0.5 flex flex-col justify-between">
-                  <div>
-                    <div class="flex items-center justify-between mb-3">
-                      <div class="w-11 h-11 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center text-xl shadow-md">
-                        ${m.icon}
-                      </div>
-                      <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                        ${m.badge}
-                      </span>
-                    </div>
-                    <h4 class="font-display font-bold text-base text-navy-900 dark:text-white group-hover:text-turquoise-600 dark:group-hover:text-turquoise-400 transition">
-                      ${m.num}. ${m.title}
-                    </h4>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${m.short}</p>
-                  </div>
-                  <div class="mt-4 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-turquoise-700 dark:text-turquoise-400">
-                    <span>Buka Layanan</span>
-                    <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                  </div>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-
-          <!-- Bottom 3 Widgets -->
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <!-- Fitur Sering Digunakan -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3">
-              <h4 class="font-display font-bold text-base flex items-center gap-2"><span>⭐</span><span>Fitur Sering Digunakan</span></h4>
-              <div class="space-y-2">
-                ${topUsedIds.map(m => `
-                  <button type="button" onclick="navigateTo('${m.id}')" class="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 hover:bg-turquoise-50 dark:hover:bg-turquoise-900/30 transition text-left">
-                    <span class="flex items-center gap-2.5 text-xs font-bold"><span>${m.icon}</span><span>${m.title}</span></span>
-                    <span class="text-[11px] text-turquoise-700 dark:text-turquoise-300 font-semibold">Buka &rarr;</span>
-                  </button>
-                `).join('')}
-              </div>
-              <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
-                <div class="text-xs font-bold text-slate-500 mb-1.5">Riwayat Pekerjaan Terakhir</div>
-                ${APP_STATE.recentHistory.length === 0
-                  ? `<p class="text-xs text-slate-400 italic">Belum ada dokumen baru dibuat pada sesi ini.</p>`
-                  : APP_STATE.recentHistory.slice(0, 3).map(h => `
-                      <div class="text-xs py-1 flex items-center justify-between gap-2">
-                        <span class="truncate font-medium">• ${escapeHtml(h.title)}</span>
-                        <span class="text-[10px] text-slate-400 shrink-0">${escapeHtml(h.time)}</span>
-                      </div>
-                    `).join('')
-                }
-              </div>
-            </div>
-
-            <!-- Tips Pembelajaran Hari Ini -->
-            <div class="bg-gradient-to-br from-amber-50 to-gold-100/70 dark:from-slate-900 dark:to-amber-950/30 border border-gold-300/60 dark:border-amber-800/50 rounded-2xl p-5 flex flex-col justify-between">
-              <div class="space-y-2.5">
-                <div class="flex items-center justify-between">
-                  <span class="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-amber-800 dark:text-gold-400">💡 Tips Pembelajaran Hari Ini</span>
-                  <button type="button" onclick="nextTeachingTip()" class="text-xs font-bold text-navy-900 dark:text-turquoise-300 hover:underline">Tips Berikutnya &rarr;</button>
-                </div>
-                <p id="dashboard-tip-text" class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
-                  “${escapeHtml(tip)}”
-                </p>
-              </div>
-              <div class="mt-4 pt-3 border-t border-amber-200/70 dark:border-slate-800 flex items-center justify-between text-xs text-amber-900 dark:text-amber-300">
-                <span>Jenjang: <strong>${escapeHtml(p.jenjang)}</strong></span>
-                <button type="button" onclick="navigateTo('menu-10')" class="font-bold underline">Eksplor Guru Belajar</button>
-              </div>
-            </div>
-
-            <!-- Informasi Aplikasi & Pengembang -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-              <div>
-                <h4 class="font-display font-bold text-base mb-2 flex items-center gap-2"><span>🛡️</span><span>Informasi &amp; Pengembang</span></h4>
-                <div class="p-3 rounded-xl bg-turquoise-50 dark:bg-turquoise-950/40 border border-turquoise-200 dark:border-turquoise-800 text-xs flex items-center justify-between mb-3">
-                  <span class="font-semibold text-turquoise-900 dark:text-turquoise-200">Status Sistem:</span>
-                  <span class="font-bold text-turquoise-700 dark:text-turquoise-400">${APP_STATE.aiStatus}</span>
-                </div>
-                <div onclick="openAboutModal()" class="cursor-pointer p-2.5 rounded-xl bg-navy-900 text-white flex items-center gap-3 hover:bg-navy-800 transition">
-                  <div data-w="44" data-h="56" class="dev-photo-slot w-11 h-14 rounded-lg overflow-hidden border border-gold-400 shrink-0 bg-sky-700">${getDeveloperAvatarMarkup('dash', 44, 56)}</div>
-                  <div class="min-w-0 flex-1">
-                    <div class="text-[10px] uppercase tracking-wider text-turquoise-300 font-bold">Pengembang Aplikasi</div>
-                    <div class="font-display font-bold text-xs text-gold-400 truncate">${escapeHtml(APP_STATE.developer.name)}</div>
-                    <div class="text-[10px] text-slate-300 truncate">Klik untuk profil / ganti foto</div>
-                  </div>
-                  <span class="text-xs text-slate-300 pr-1">&rarr;</span>
-                </div>
-              </div>
-              <button type="button" onclick="openSettingsModal()" class="mt-3 w-full py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-bold transition">
-                ⚙️ Konfigurasi AI &amp; Pengaturan
+            <div class="relative inline-block">
+              <button type="button" onclick="toggleDownloadDropdown('${ddId}', event)" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 text-xs font-extrabold shadow-xs transition">
+                <span>📥 Unduh File</span>
+                <span>▾</span>
               </button>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function filterDashboardMenus(query) {
-      const q = (query || '').trim().toLowerCase();
-      document.querySelectorAll('.dashboard-menu-card').forEach(card => {
-        const hay = card.getAttribute('data-search') || '';
-        card.style.display = (!q || hay.includes(q)) ? '' : 'none';
-      });
-    }
-
-    function nextTeachingTip() {
-      APP_STATE.tipIndex = (APP_STATE.tipIndex + 1) % TEACHING_TIPS.length;
-      const el = document.getElementById('dashboard-tip-text');
-      if (el) el.textContent = `“${TEACHING_TIPS[APP_STATE.tipIndex]}”`;
-    }
-
-    /*************************************************************************
-     * 7. MENU 1: PERANGKAT PEMBELAJARAN
-     *************************************************************************/
-    function renderMenu1Perangkat(ws) {
-      const p = APP_STATE.profile;
-      ws.innerHTML = `
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
-            <h2 class="font-display font-extrabold text-lg">📘 Generator Perangkat Pembelajaran</h2>
-            <div>
-              <label class="block text-xs font-bold mb-1">Jenis Perangkat</label>
-              <select id="m1-jenis" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
-                <option value="Modul Ajar Lengkap">Modul Ajar (Kurikulum Merdeka)</option>
-                <option value="Alur Tujuan Pembelajaran (ATP)">Alur Tujuan Pembelajaran (ATP)</option>
-                <option value="Tujuan Pembelajaran (TP)">Tujuan Pembelajaran (TP)</option>
-                <option value="Perencanaan Pembelajaran Mendalam (Deep Learning)">Perencanaan Pembelajaran Mendalam (Deep Learning)</option>
-                <option value="Rencana Pelaksanaan Pembelajaran (RPP)">RPP / Rencana Pembelajaran</option>
-                <option value="Program Tahunan (Prota)">Program Tahunan (Prota)</option>
-                <option value="Program Semester (Promes)">Program Semester (Promes)</option>
-                <option value="Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)">Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)</option>
-                <option value="Rancangan Diferensiasi Pembelajaran">Diferensiasi Pembelajaran (Konten, Proses, Produk)</option>
-                <option value="Instrumen Refleksi Guru">Refleksi Guru</option>
-                <option value="Lembar Refleksi Peserta Didik">Refleksi Peserta Didik</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold mb-1">Jenjang</label>
-                <input type="text" id="m1-jenjang" value="${escapeHtml(p.jenjang)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
-              </div>
-              <div>
-                <label class="block text-xs font-bold mb-1">Kelas / Fase</label>
-                <input type="text" id="m1-kelas" value="${escapeHtml(p.kelas)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold mb-1">Mata Pelajaran</label>
-                <input type="text" id="m1-mapel" value="${escapeHtml(p.mapel)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
-              </div>
-              <div>
-                <label class="block text-xs font-bold mb-1">Semester</label>
-                <select id="m1-semester" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
-                  <option value="Semester 1 (Ganjil)">Semester 1 (Ganjil)</option>
-                  <option value="Semester 2 (Genap)">Semester 2 (Genap)</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-bold mb-1">Topik / Materi Pokok <span class="text-rose-500">*</span></label>
-              <input type="text" id="m1-materi" value="Harmoni dalam Ekosistem dan Rantai Makanan" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold mb-1">Alokasi Waktu</label>
-                <input type="text" id="m1-waktu" value="2 x 35 Menit (1 Pertemuan)" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
-              </div>
-              <div>
-                <label class="block text-xs font-bold mb-1">Kurikulum</label>
-                <input type="text" id="m1-kurikulum" value="Kurikulum Merdeka (Deep Learning)" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-bold mb-1">Model Pembelajaran</label>
-              <select id="m1-model" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
-                <option value="Problem-Based Learning (PBL)">Problem-Based Learning (PBL)</option>
-                <option value="Project-Based Learning (PjBL)">Project-Based Learning (PjBL)</option>
-                <option value="Discovery / Inquiry Learning">Discovery / Inquiry Learning</option>
-                <option value="Pembelajaran Berdiferensiasi & Kooperatif">Pembelajaran Berdiferensiasi &amp; Kooperatif</option>
-                <option value="Teaching Factory (Vokasi SMK)">Teaching Factory (Vokasi SMK)</option>
-                <option value="Bermain Bermakna & Eksplorasi (PAUD/SD Awal)">Bermain Bermakna &amp; Eksplorasi</option>
-              </select>
-            </div>
-            <button type="button" onclick="generateMenu1()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-navy-900 to-turquoise-700 hover:opacity-95 text-white font-display font-bold text-sm shadow-lg transition">
-              ✨ Susun Perangkat Pembelajaran
-            </button>
-          </div>
-
-          <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 min-h-[420px]">
-            <div id="m1-output-wrap">
-              <div class="h-80 flex flex-col items-center justify-center text-center text-slate-400 p-6">
-                <span class="text-4xl mb-3">📘</span>
-                <p class="font-semibold text-slate-600 dark:text-slate-300">Siap Menyusun Perangkat Pembelajaran</p>
-                <p class="text-xs mt-1 max-w-md">Pilih jenis perangkat (Modul Ajar, ATP, Deep Learning, RPP, Prota, Promes, KKTP) lalu tekan tombol <strong>Susun Perangkat Pembelajaran</strong>.</p>
+              <div id="${ddId}" class="download-dropdown-menu hidden absolute right-0 mt-1.5 w-52 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl py-1.5 z-30 text-left">
+                <button type="button" onclick="downloadDocxElement('${containerId}', '${escapeHtml(docTitle)}')" class="w-full px-3.5 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+                  <span>📘</span><span>Microsoft Word (.doc)</span>
+                </button>
+                <button type="button" onclick="downloadHtmlElement('${containerId}', '${escapeHtml(docTitle)}')" class="w-full px-3.5 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+                  <span>🌐</span><span>Dokumen Web (.html)</span>
+                </button>
+                <button type="button" onclick="downloadTxtElement('${containerId}', '${escapeHtml(docTitle)}')" class="w-full px-3.5 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+                  <span>📝</span><span>Teks Polos (.txt)</span>
+                </button>
+                <div class="my-1 border-t border-slate-100 dark:border-slate-800"></div>
+                <button type="button" onclick="printDocumentElement('${containerId}', '${escapeHtml(docTitle)}')" class="w-full px-3.5 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+                  <span>📄</span><span>Simpan sebagai PDF (A4)</span>
+                </button>
+                <button type="button" onclick="navigateTo('unduh')" class="w-full px-3.5 py-2 text-xs font-bold text-turquoise-700 dark:text-turquoise-400 hover:bg-turquoise-50 dark:hover:bg-turquoise-950/40 flex items-center gap-2">
+                  <span>📂</span><span>Buka Pusat Unduh File</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1487,6 +1393,217 @@
       wrap.innerHTML = renderResultToolbar('m1-doc-content', docTitle, 'Perangkat Pembelajaran') +
         `<div id="m1-doc-content" contenteditable="true" class="edu-doc outline-none">${html}</div>`;
       addRecentHistory('Perangkat Pembelajaran', docTitle);
+    }
+
+    function saveDocumentById(containerId, docTitle, category) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      saveToCollection({
+        title: docTitle,
+        category: category,
+        htmlContent: el.innerHTML
+      });
+    }
+
+    /*************************************************************************
+     * 6. DASHBOARD UTAMA
+     *************************************************************************/
+    function renderDashboard(ws) {
+      const p = APP_STATE.profile;
+      const totalUsage = Object.values(APP_STATE.usageCounts || {}).reduce((a, b) => a + b, 0);
+      const currentTip = TEACHING_TIPS[APP_STATE.tipIndex % TEACHING_TIPS.length];
+
+      ws.innerHTML = `
+        <div class="space-y-6">
+          <!-- Hero Welcome Card -->
+          <div class="bg-gradient-to-r from-navy-950 via-navy-900 to-turquoise-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div class="space-y-2 max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-bold text-gold-300">
+                  <span>👋 Selamat Datang, Pendidik Hebat</span>
+                </div>
+                <h2 class="font-display font-extrabold text-2xl sm:text-3xl">${escapeHtml(p.nama)}</h2>
+                <p class="text-xs sm:text-sm text-slate-200">
+                  ${escapeHtml(p.sekolah)} &bull; <strong>${escapeHtml(p.jenjang)} (${escapeHtml(p.kelas)})</strong> &bull; Mapel: ${escapeHtml(p.mapel)}
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-2.5 shrink-0">
+                <button type="button" onclick="navigateTo('menu-1')" class="px-4 py-3 rounded-2xl bg-turquoise-500 hover:bg-turquoise-400 text-navy-950 font-display font-extrabold text-xs sm:text-sm shadow transition">
+                  📘 Buat Modul Ajar
+                </button>
+                <button type="button" onclick="navigateTo('unduh')" class="px-4 py-3 rounded-2xl bg-gold-500 hover:bg-gold-400 text-navy-950 font-display font-extrabold text-xs sm:text-sm shadow transition">
+                  📥 Pusat Unduh File
+                </button>
+                <button type="button" onclick="navigateTo('menu-12')" class="px-4 py-3 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs sm:text-sm border border-white/20 transition">
+                  🤖 Tanya Asisten AI
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Stats -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
+              <div class="text-xs text-slate-500 font-semibold">Dokumen Tersimpan</div>
+              <div class="font-display font-extrabold text-2xl text-navy-900 dark:text-white mt-1">${APP_STATE.collections.length}</div>
+              <button type="button" onclick="navigateTo('koleksi')" class="text-[11px] font-bold text-turquoise-600 hover:underline mt-1">Buka Koleksi &rarr;</button>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
+              <div class="text-xs text-slate-500 font-semibold">Aktivitas Layanan</div>
+              <div class="font-display font-extrabold text-2xl text-turquoise-600 mt-1">${totalUsage}x</div>
+              <div class="text-[11px] text-slate-400 mt-1">Generasi &amp; simulasi</div>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
+              <div class="text-xs text-slate-500 font-semibold">Modul Guru Belajar</div>
+              <div class="font-display font-extrabold text-2xl text-amber-500 mt-1">${APP_STATE.learnedModules.length}/4</div>
+              <button type="button" onclick="navigateTo('menu-10')" class="text-[11px] font-bold text-turquoise-600 hover:underline mt-1">Lanjut Belajar &rarr;</button>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
+              <div class="text-xs text-slate-500 font-semibold">Status Sistem AI</div>
+              <div class="font-display font-extrabold text-sm text-emerald-600 mt-2">🟢 ${escapeHtml(APP_STATE.aiStatus)}</div>
+              <button type="button" onclick="openSettingsModal()" class="text-[11px] font-bold text-slate-500 hover:underline mt-1">Atur API Key</button>
+            </div>
+          </div>
+
+          <!-- 12 Main Services Grid -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-display font-extrabold text-lg text-navy-900 dark:text-white">🚀 12 Layanan Utama GURU MASTER AI</h3>
+              <span class="text-xs text-slate-500">Klik kartu untuk membuka layanan</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              ${MENU_ITEMS.map(m => `
+                <button type="button" onclick="navigateTo('${m.id}')" class="group text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-turquoise-500 rounded-2xl p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between mb-3">
+                      <span class="w-11 h-11 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center text-xl shadow">${m.icon}</span>
+                      <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">${m.badge}</span>
+                    </div>
+                    <h4 class="font-display font-extrabold text-sm sm:text-base group-hover:text-turquoise-600 transition">${m.title}</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${m.short}</p>
+                  </div>
+                  <div class="mt-4 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-bold text-turquoise-700 dark:text-turquoise-400">
+                    <span>Layanan #${m.num}</span>
+                    <span>Buka &rarr;</span>
+                  </div>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Bottom Row: Pedagogical Tip & Recent Activity -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <div class="lg:col-span-7 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-amber-800 dark:text-gold-400">💡 Inspirasi Pedagogis Hari Ini</span>
+                  <button type="button" onclick="APP_STATE.tipIndex++;renderDashboard(document.getElementById('main-workspace'))" class="text-xs font-bold text-amber-900 dark:text-gold-300 hover:underline">Tips Berikutnya &rarr;</button>
+                </div>
+                <p class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed">“${escapeHtml(currentTip)}”</p>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3">
+              <h4 class="font-display font-extrabold text-sm">🕒 Aktivitas Terakhir</h4>
+              ${APP_STATE.recentHistory.length === 0
+                ? `<p class="text-xs text-slate-400">Belum ada riwayat aktivitas sesi ini. Mulai buat perangkat ajar atau soal!</p>`
+                : `<ul class="space-y-2 text-xs">
+                    ${APP_STATE.recentHistory.slice(0, 4).map(h => `
+                      <li class="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/70">
+                        <span class="truncate font-medium"><strong>[${escapeHtml(h.category)}]</strong> ${escapeHtml(h.title)}</span>
+                        <span class="text-[10px] text-slate-400 shrink-0">${escapeHtml(h.time)}</span>
+                      </li>
+                    `).join('')}
+                  </ul>`
+              }
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /*************************************************************************
+     * 7. MENU 1: PERANGKAT PEMBELAJARAN
+     *************************************************************************/
+    function renderMenu1Perangkat(ws) {
+      const p = APP_STATE.profile;
+      ws.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+            <h2 class="font-display font-extrabold text-lg">📘 Generator Perangkat Pembelajaran</h2>
+            <div>
+              <label class="block text-xs font-bold mb-1">Jenis Perangkat</label>
+              <select id="m1-jenis" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                <option value="Modul Ajar Kurikulum Merdeka">Modul Ajar Kurikulum Merdeka</option>
+                <option value="RPP Pembelajaran Mendalam (Deep Learning)">RPP Pembelajaran Mendalam (Deep Learning)</option>
+                <option value="Alur Tujuan Pembelajaran (ATP)">Alur Tujuan Pembelajaran (ATP)</option>
+                <option value="Bahan Ajar & Ringkasan Materi">Bahan Ajar &amp; Ringkasan Materi</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Jenjang</label>
+                <select id="m1-jenjang" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                  ${['PAUD/TK', 'SD/MI', 'SMP/MTs', 'SMA/MA', 'SMK', 'SLB'].map(j => `<option value="${j}" ${p.jenjang === j ? 'selected' : ''}>${j}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Kelas / Fase</label>
+                <input type="text" id="m1-kelas" value="${escapeHtml(p.kelas)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1">Mata Pelajaran</label>
+                <input type="text" id="m1-mapel" value="${escapeHtml(p.mapel)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Semester</label>
+                <select id="m1-semester" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                  <option value="Ganjil">Semester Ganjil</option>
+                  <option value="Genap">Semester Genap</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Topik / Materi Pokok</label>
+              <input type="text" id="m1-materi" value="Harmoni dalam Ekosistem dan Rantai Makanan" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="block text-xs font-bold mb-1">Alokasi Waktu</label>
+                <input type="text" id="m1-waktu" value="2 x 35 Menit" class="w-full px-2.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Kurikulum</label>
+                <input type="text" id="m1-kurikulum" value="Merdeka" class="w-full px-2.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Model Belajar</label>
+                <select id="m1-model" class="w-full px-2 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
+                  <option value="Problem Based Learning (PBL)">PBL</option>
+                  <option value="Project Based Learning (PjBL)">PjBL</option>
+                  <option value="Discovery Learning">Discovery</option>
+                  <option value="Inquiry Learning">Inquiry</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" onclick="generateMenu1()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-navy-900 hover:opacity-95 text-white font-display font-bold text-sm shadow-lg transition">
+              ✨ Susun Perangkat Pembelajaran
+            </button>
+          </div>
+
+          <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 min-h-[420px]">
+            <div id="m1-output-wrap">
+              <div class="h-80 flex flex-col items-center justify-center text-center text-slate-400 p-6">
+                <span class="text-4xl mb-3">📘</span>
+                <p class="font-semibold text-slate-600 dark:text-slate-300">Perangkat Pembelajaran Siap Cetak &amp; Unduh</p>
+                <p class="text-xs mt-1 max-w-md">Lengkapi identitas materi di sebelah kiri lalu klik <strong>Susun Perangkat Pembelajaran</strong> untuk menghasilkan Modul Ajar / RPP lengkap.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     /*************************************************************************
@@ -2817,41 +2934,63 @@
       return `
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h3 class="font-display font-extrabold text-lg">🗂️ ${cfg.title}</h3>
-          <button type="button" onclick="printDocumentElement('admin-print-table', '${cfg.title}')" class="px-3.5 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold">🖨️ Cetak Tabel Administrasi</button>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="printDocumentElement('admin-print-table', '${cfg.title}')" class="px-3.5 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold">🖨️ Cetak Tabel</button>
+            <div class="relative inline-block">
+              <button type="button" onclick="toggleDownloadDropdown('dd-admin-${tab}', event)" class="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 text-xs font-extrabold shadow-xs">
+                <span>📥 Unduh File</span><span>▾</span>
+              </button>
+              <div id="dd-admin-${tab}" class="download-dropdown-menu hidden absolute right-0 mt-1.5 w-52 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl py-1.5 z-30 text-left">
+                <button type="button" onclick="downloadCsvAdmin('${tab}')" class="w-full px-3.5 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+                  <span>📊</span><span>Microsoft Excel (.csv)</span>
+                </button>
+                <button type="button" onclick="downloadDocxElement('admin-print-table', '${cfg.title}')" class="w-full px-3.5 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+                  <span>📘</span><span>Microsoft Word (.doc)</span>
+                </button>
+                <button type="button" onclick="downloadHtmlElement('admin-print-table', '${cfg.title}')" class="w-full px-3.5 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+                  <span>🌐</span><span>Dokumen HTML (.html)</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <form onsubmit="addAdminRow(event, '${tab}')" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+        <form onsubmit="addAdminEntry(event, '${tab}')" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
           ${cfg.fields.map(f => `
             <div>
               <label class="block text-[11px] font-bold mb-1">${f.label}</label>
-              <input type="${f.type || 'text'}" name="${f.name}" required value="${escapeHtml(f.val || '')}" placeholder="${escapeHtml(f.placeholder || '')}" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs" />
+              <input type="${f.type || 'text'}" name="${f.name}" value="${escapeHtml(f.val || '')}" placeholder="${escapeHtml(f.placeholder || '')}" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs" />
             </div>
           `).join('')}
-          <div class="sm:col-span-2 lg:col-span-3 flex justify-end">
-            <button type="submit" class="px-5 py-2.5 rounded-xl bg-turquoise-600 hover:bg-turquoise-500 text-white text-xs font-bold shadow">+ Tambah Data</button>
+          <div class="sm:col-span-2 lg:col-span-3 flex justify-end pt-1">
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-turquoise-600 hover:bg-turquoise-500 text-white text-xs font-bold shadow transition">
+              ➕ Tambah ke ${cfg.title}
+            </button>
           </div>
         </form>
 
-        <div id="admin-print-table" class="overflow-x-auto edu-doc">
-          <h2 style="margin-top:0;">${cfg.title} — ${escapeHtml(p.kelas)}</h2>
-          <table>
+        <div id="admin-print-table" class="overflow-x-auto">
+          <h2 class="hidden print:block">${cfg.title} — ${escapeHtml(p.kelas)}</h2>
+          <table class="w-full border-collapse text-xs">
             <thead>
-              <tr>
-                ${cfg.headers.map(h => `<th>${h}</th>`).join('')}
-                <th class="no-print" style="width:70px;">Aksi</th>
+              <tr class="bg-slate-100 dark:bg-slate-800 text-left">
+                <th class="border border-slate-300 dark:border-slate-700 p-2.5 w-10">No</th>
+                ${cfg.headers.map(h => `<th class="border border-slate-300 dark:border-slate-700 p-2.5">${h}</th>`).join('')}
+                <th class="border border-slate-300 dark:border-slate-700 p-2.5 w-16 text-center no-print">Aksi</th>
               </tr>
             </thead>
             <tbody>
               ${rows.length === 0
-                ? `<tr><td colspan="${cfg.headers.length + 1}" class="text-center text-slate-400 py-4">Belum ada data tercatat.</td></tr>`
-                : rows.map((r, rIdx) => `
-                    <tr>
-                      ${cfg.cols.map(c => `<td>${escapeHtml(r[c] ?? '')}</td>`).join('')}
-                      <td class="no-print">
-                        <button type="button" onclick="deleteAdminRow('${tab}', ${rIdx})" class="text-rose-600 hover:underline text-xs font-bold">Hapus</button>
-                      </td>
-                    </tr>
-                  `).join('')
+                ? `<tr><td colspan="${cfg.headers.length + 2}" class="border border-slate-300 dark:border-slate-700 p-6 text-center text-slate-400">Belum ada data tercatat pada ${cfg.title}.</td></tr>`
+                : rows.map((r, idx) => `
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                    <td class="border border-slate-300 dark:border-slate-700 p-2.5 text-center">${idx + 1}</td>
+                    ${cfg.cols.map(c => `<td class="border border-slate-300 dark:border-slate-700 p-2.5">${escapeHtml(r[c] ?? '')}</td>`).join('')}
+                    <td class="border border-slate-300 dark:border-slate-700 p-2.5 text-center no-print">
+                      <button type="button" onclick="deleteAdminEntry('${tab}', ${r.id})" class="text-rose-600 hover:underline font-bold">Hapus</button>
+                    </td>
+                  </tr>
+                `).join('')
               }
             </tbody>
           </table>
@@ -2859,121 +2998,107 @@
       `;
     }
 
-    function addAdminRow(e, tab) {
+    function addAdminEntry(e, tab) {
       e.preventDefault();
       const fd = new FormData(e.target);
       const entry = { id: Date.now() };
-      for (const [k, v] of fd.entries()) entry[k] = v;
-      APP_STATE.adminData[tab] = APP_STATE.adminData[tab] || [];
+      fd.forEach((val, key) => { entry[key] = String(val).trim(); });
+      if (!APP_STATE.adminData[tab]) APP_STATE.adminData[tab] = [];
       APP_STATE.adminData[tab].unshift(entry);
       safeStorageSet('gma_admin_data', JSON.stringify(APP_STATE.adminData));
-      showToast('Data administrasi berhasil disimpan!', 'success');
+      showToast('Data administrasi berhasil ditambahkan!', 'success');
       renderMenu8Administrasi(document.getElementById('main-workspace'));
     }
 
-    function deleteAdminRow(tab, idx) {
-      APP_STATE.adminData[tab].splice(idx, 1);
+    function deleteAdminEntry(tab, id) {
+      APP_STATE.adminData[tab] = (APP_STATE.adminData[tab] || []).filter(r => r.id !== id);
       safeStorageSet('gma_admin_data', JSON.stringify(APP_STATE.adminData));
       showToast('Baris data dihapus.', 'info');
       renderMenu8Administrasi(document.getElementById('main-workspace'));
     }
 
     /*************************************************************************
-     * 15. MENU 9: PERPUSTAKAAN DIGITAL (SUMBER RESMI KEMENDIKBUD)
+     * 15. MENU 9: PERPUSTAKAAN DIGITAL
      *************************************************************************/
-    const DIGITAL_LIBRARY_ITEMS = [
-      { title: 'Sistem Perbukuan Nasional (SIBI) — Buku Teks Utama & Nonteks', category: 'Buku pembelajaran', jenjang: 'Semua Jenjang', source: 'Pusat Perbukuan Kemendikbudristek', url: 'https://buku.kemdikbud.go.id', summary: 'Portal resmi buku teks pelajaran Kurikulum Merdeka (PDF & Buku Interaktif) gratis untuk guru dan siswa PAUD, SD, SMP, SMA, SMK, dan SLB.' },
-      { title: 'Kurikulum Merdeka — Capaian Pembelajaran (CP) & Panduan Pembelajaran Asesmen', category: 'Materi Kurikulum Merdeka', jenjang: 'Semua Jenjang', source: 'BSKAP Kemendikbudristek', url: 'https://kurikulum.kemdikbud.go.id', summary: 'Dokumen resmi struktur kurikulum, Capaian Pembelajaran terbaru setiap fase, serta panduan pembelajaran dan asesmen.' },
-      { title: 'Rumah Pendidikan / Platform Merdeka Mengajar (PMM)', category: 'Referensi guru', jenjang: 'Semua Jenjang', source: 'Kemendikbudristek RI', url: 'https://guru.kemdikbud.go.id', summary: 'Ruang belajar, perangkat ajar terkurasi, pelatihan mandiri, dan komunitas praktik baik guru Indonesia.' },
-      { title: 'Ringkasan Konsep: Pembelajaran Mendalam (Deep Learning) di Kelas', category: 'Rangkuman materi', jenjang: 'SD/MI', source: 'Modul Internal Guru Master AI', url: '', summary: 'Pembelajaran mendalam menekankan 3 prinsip utama: Berkesadaran (Mindful), Bermakna (Meaningful), dan Menggembirakan (Joyful) untuk membangun 8 dimensi profil lulusan.' },
-      { title: 'Panduan Menyusun LKPD Eksploratif & Berdiferensiasi', category: 'LKPD', jenjang: 'SMP/MTs', source: 'Referensi Pedagogi Guru Master AI', url: '', summary: 'Langkah menyusun LKPD berbasis masalah nyata dengan penyesuaian tingkat dukungan (scaffolding) bagi beragam kesiapan belajar siswa.' },
-      { title: 'Bahan Ajar & Modul Praktikum Vokasi Berbasis Teaching Factory', category: 'Modul pembelajaran', jenjang: 'SMK', source: 'Direktorat SMK Kemendikbudristek', url: 'https://smk.kemdikbud.go.id', summary: 'Referensi penyelarasan kurikulum vokasi dengan standar dunia usaha dan dunia industri (DUDIKA).' },
-      { title: 'Panduan Pendidikan Inklusif & Program Pembelajaran Individual (PPI)', category: 'Bahan ajar', jenjang: 'SLB', source: 'Direktorat PMPK Kemendikbudristek', url: 'https://buku.kemdikbud.go.id', summary: 'Acuan adaptasi kurikulum, asesmen fungsional, dan media aksesibel bagi peserta didik berkebutuhan khusus.' },
-      { title: 'Rumah Belajar — Media Pembelajaran Interaktif & Laboratorium Maya', category: 'Media pembelajaran', jenjang: 'SMA/MA', source: 'Pusdatin Kemendikbudristek', url: 'https://belajar.kemdikbud.go.id', summary: 'Sumber belajar digital, simulasi laboratorium sains maya, dan bank konten edukasi nasional.' }
+    const DIGITAL_LIBRARY_BOOKS = [
+      { id: 'lib-1', title: 'Panduan Pembelajaran dan Asesmen Kurikulum Merdeka', jenjang: 'Semua Jenjang', kategori: 'Regulasi & Panduan', summary: 'Acuan resmi perencanaan pembelajaran, asesmen formatif/sumatif, KKTP, dan pengolahan nilai raport.' },
+      { id: 'lib-2', title: 'Buku Guru & Siswa IPAS Kelas V SD/MI', jenjang: 'SD/MI', kategori: 'Buku Teks Utama', summary: 'Materi cahaya, bunyi, ekosistem, kelistrikan, bumi, dan pelestarian lingkungan berbasis aktivitas eksperimen.' },
+      { id: 'lib-3', title: 'Panduan Projek Penguatan Profil Pelajar Pancasila (P5)', jenjang: 'Semua Jenjang', kategori: 'Kokurikuler', summary: 'Langkah merancang tema proyek, modul P5, alur aktivitas, hingga asesmen dimensi karakter peserta didik.' },
+      { id: 'lib-4', title: 'Buku Teks Matematika & Literasi Numerasi SMP/MTs', jenjang: 'SMP/MTs', kategori: 'Buku Teks Utama', summary: 'Penguatan aljabar, geometri, statistika, dan pemecahan masalah kontekstual berbasis soal AKM.' },
+      { id: 'lib-5', title: 'Koding & Kecerdasan Artifisial untuk Pendidik', jenjang: 'SMA/MA', kategori: 'Teknologi Pendidikan', summary: 'Pengenalan berpikir komputasional, etika AI, dan pemanfaatan AI generatif dalam pembelajaran.' },
+      { id: 'lib-6', title: 'Panduan Program Pembelajaran Individual (PPI) Pendidikan Khusus', jenjang: 'SLB', kategori: 'Pendidikan Inklusif', summary: 'Strategi asesmen fungsional, analisis tugas bertahap, dan modifikasi media multisensori untuk peserta didik berkebutuhan khusus.' }
     ];
 
     function renderMenu9Perpustakaan(ws) {
       ws.innerHTML = `
         <div class="space-y-5">
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h2 class="font-display font-extrabold text-lg">📚 Perpustakaan Digital Pendidikan</h2>
-                <p class="text-xs text-slate-500">Menggunakan tautan portal resmi Kemendikbudristek &amp; ringkasan referensi edukatif terverifikasi.</p>
-              </div>
-            </div>
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3">
+            <h2 class="font-display font-extrabold text-lg">📚 Perpustakaan Digital Guru &amp; Referensi Resmi</h2>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <input type="text" id="lib-search" oninput="filterDigitalLibrary()" placeholder="Cari judul buku atau materi..." class="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
-              <select id="lib-cat" onchange="filterDigitalLibrary()" class="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
-                <option value="">Semua Kategori</option>
-                <option value="Buku pembelajaran">Buku pembelajaran</option>
-                <option value="Materi Kurikulum Merdeka">Materi Kurikulum Merdeka</option>
-                <option value="Rangkuman materi">Rangkuman materi</option>
-                <option value="Bahan ajar">Bahan ajar</option>
-                <option value="LKPD">LKPD</option>
-                <option value="Modul pembelajaran">Modul pembelajaran</option>
-                <option value="Referensi guru">Referensi guru</option>
-                <option value="Media pembelajaran">Media pembelajaran</option>
-              </select>
-              <select id="lib-jenjang" onchange="filterDigitalLibrary()" class="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+              <input type="text" id="lib-search" oninput="filterLibraryBooks()" placeholder="Cari judul buku atau panduan..." class="sm:col-span-2 px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              <select id="lib-jenjang" onchange="filterLibraryBooks()" class="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
                 <option value="">Semua Jenjang</option>
                 <option value="Semua Jenjang">Semua Jenjang</option>
                 <option value="SD/MI">SD/MI</option>
                 <option value="SMP/MTs">SMP/MTs</option>
                 <option value="SMA/MA">SMA/MA</option>
-                <option value="SMK">SMK</option>
                 <option value="SLB">SLB</option>
               </select>
             </div>
           </div>
-
-          <div id="lib-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+          <div id="lib-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
       `;
-      filterDigitalLibrary();
+      filterLibraryBooks();
     }
 
-    function filterDigitalLibrary() {
+    function filterLibraryBooks() {
       const q = (document.getElementById('lib-search')?.value || '').toLowerCase();
-      const cat = document.getElementById('lib-cat')?.value || '';
-      const jen = document.getElementById('lib-jenjang')?.value || '';
+      const j = document.getElementById('lib-jenjang')?.value || '';
       const grid = document.getElementById('lib-grid');
       if (!grid) return;
 
-      const filtered = DIGITAL_LIBRARY_ITEMS.filter(it => {
-        const matchQ = !q || (it.title + ' ' + it.summary + ' ' + it.source).toLowerCase().includes(q);
-        const matchC = !cat || it.category === cat;
-        const matchJ = !jen || it.jenjang === jen || it.jenjang === 'Semua Jenjang';
-        return matchQ && matchC && matchJ;
-      });
-
-      grid.innerHTML = filtered.map((it, idx) => `
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+      const filtered = DIGITAL_LIBRARY_BOOKS.filter(b => (!q || b.title.toLowerCase().includes(q) || b.summary.toLowerCase().includes(q)) && (!j || b.jenjang === j));
+      grid.innerHTML = filtered.map(b => `
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-4">
           <div>
-            <div class="flex flex-wrap items-center gap-2 mb-2">
-              <span class="px-2.5 py-0.5 rounded-full bg-turquoise-100 dark:bg-turquoise-900/40 text-turquoise-800 dark:text-turquoise-300 text-[11px] font-bold">${escapeHtml(it.category)}</span>
-              <span class="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-semibold">${escapeHtml(it.jenjang)}</span>
+            <div class="flex items-center justify-between text-[11px] mb-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-teal-100 dark:bg-teal-900/40 text-teal-800 dark:text-teal-300 font-bold">${escapeHtml(b.jenjang)}</span>
+              <span class="text-slate-400">${escapeHtml(b.kategori)}</span>
             </div>
-            <h3 class="font-display font-bold text-base text-navy-900 dark:text-white">${escapeHtml(it.title)}</h3>
-            <p class="text-[11px] text-amber-700 dark:text-gold-400 font-semibold mt-0.5">Sumber: ${escapeHtml(it.source)}</p>
-            <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">${escapeHtml(it.summary)}</p>
+            <h3 class="font-display font-bold text-base">${escapeHtml(b.title)}</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">${escapeHtml(b.summary)}</p>
           </div>
-          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-            ${it.url
-              ? `<a href="${escapeHtml(it.url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold hover:bg-navy-800 transition">🌐 Buka Portal Resmi &nearr;</a>`
-              : `<button type="button" onclick="openLibraryReader(${idx})" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-turquoise-600 text-white text-xs font-bold hover:bg-turquoise-500 transition">📖 Baca Ringkasan Lengkap</button>`
-            }
-          </div>
+          <button type="button" onclick="openLibraryBookModal('${b.id}')" class="w-full py-2.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold transition">
+            📖 Baca Ringkasan &amp; Catatan
+          </button>
         </div>
       `).join('');
     }
 
-    function openLibraryReader(idx) {
-      const it = DIGITAL_LIBRARY_ITEMS[idx];
-      if (!it) return;
+    function openLibraryBookModal(bookId) {
+      const b = DIGITAL_LIBRARY_BOOKS.find(x => x.id === bookId);
+      if (!b) return;
       openModal({
-        title: it.title,
-        bodyHtml: `<div class="edu-doc"><p><strong>Kategori:</strong> ${escapeHtml(it.category)} | <strong>Sumber:</strong> ${escapeHtml(it.source)}</p><p>${escapeHtml(it.summary)}</p><p>Anda dapat langsung menerapkan konsep ini menggunakan fitur <strong>Perangkat Pembelajaran</strong> atau <strong>LKPD Generator</strong> di aplikasi Guru Master AI.</p></div>`
+        title: b.title,
+        bodyHtml: `
+          <div id="modal-lib-doc" class="edu-doc space-y-3 text-sm">
+            <h1>${escapeHtml(b.title)}</h1>
+            <p><strong>Jenjang:</strong> ${escapeHtml(b.jenjang)} &bull; <strong>Kategori:</strong> ${escapeHtml(b.kategori)}</p>
+            <h2>Intisari Referensi</h2>
+            <p>${escapeHtml(b.summary)}</p>
+            <h2>Poin Implementasi di Kelas</h2>
+            <ul>
+              <li>Gunakan asesmen awal non-kognitif dan kognitif untuk memetakan kesiapan belajar siswa.</li>
+              <li>Rancang aktivitas belajar bermakna yang menghubungkan konsep dengan konteks lingkungan lokal peserta didik.</li>
+              <li>Dokumentasikan hasil refleksi dan karya siswa sebagai portofolio perkembangan belajar.</li>
+            </ul>
+          </div>
+        `,
+        footerHtml: `
+          <button type="button" onclick="downloadDocxElement('modal-lib-doc', '${escapeHtml(b.title)}')" class="px-4 py-2 rounded-xl bg-gold-500 text-navy-950 text-xs font-bold">📥 Unduh Word (.doc)</button>
+          <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold">Tutup</button>
+        `
       });
     }
 
@@ -2981,43 +3106,38 @@
      * 16. MENU 10: GURU BELAJAR (PENGEMBANGAN KOMPETENSI)
      *************************************************************************/
     const GURU_BELAJAR_MODULES = [
-      { id: 'deep-learning', title: 'Pembelajaran Mendalam (Deep Learning)', duration: '15 Menit Baca', summary: 'Memahami kerangka Berkesadaran (Mindful), Bermakna (Meaningful), dan Menggembirakan (Joyful) untuk mentransformasi pembelajaran di kelas.', content: '<h2>Apa Itu Pembelajaran Mendalam (Deep Learning)?</h2><p>Pembelajaran mendalam bukan sekadar menghafal materi, melainkan proses memuliakan peserta didik melalui olah pikir, olah hati, olah rasa, dan olah raga secara terpadu.</p><ul><li><strong>Berkesadaran (Mindful):</strong> Siswa sadar akan tujuan belajarnya dan aktif mengatur strategi berpikirnya.</li><li><strong>Bermakna (Meaningful):</strong> Materi baru dikaitkan dengan pengetahuan awal dan kehidupan nyata siswa.</li><li><strong>Menggembirakan (Joyful):</strong> Suasana belajar aman, positif, menantang, dan memicu rasa ingin tahu.</li></ul>' },
-      { id: 'koding-ai', title: 'Koding dan Kecerdasan Artifisial (AI)', duration: '20 Menit Baca', summary: 'Pengenalan berpikir komputasional (computational thinking), logika algoritma sederhana, dan etika pemanfaatan AI bagi guru & siswa.', content: '<h2>Integrasi Koding &amp; AI di Sekolah</h2><p>Berpikir komputasional melatih siswa memecahkan masalah melalui 4 pilar: <strong>Dekomposisi</strong> (memecah masalah besar), <strong>Pengenalan Pola</strong>, <strong>Abstraksi</strong>, dan <strong>Algoritma</strong> (langkah sistematis).</p><p>Di jenjang SD/SMP, koding dapat dimulai secara <em>unplugged</em> (tanpa komputer) melalui permainan kartu arah sebelum beralih ke pemrograman blok visual.</p>' },
-      { id: 'literasi-digital', title: 'Literasi Digital & Keamanan Siber Guru', duration: '12 Menit Baca', summary: 'Kecakapan digital, budaya digital, etika digital, serta perlindungan data pribadi peserta didik di ruang digital.', content: '<h2>4 Pilar Literasi Digital Pendidikan</h2><ol><li><strong>Digital Skills:</strong> Kemampuan mengoperasikan perangkat dan aplikasi pembelajaran.</li><li><strong>Digital Culture:</strong> Membangun wawasan kebangsaan dan nilai Pancasila di ruang digital.</li><li><strong>Digital Ethics:</strong> Menghindari plagiarisme dan menghormati hak cipta karya orang lain.</li><li><strong>Digital Safety:</strong> Melindungi data pribadi siswa dan kata sandi akun pendidikan.</li></ol>' },
-      { id: 'numerasi', title: 'Penguatan Numerasi Lintas Mata Pelajaran', duration: '15 Menit Baca', summary: 'Strategi mengintegrasikan kemampuan membaca data, grafik, estimasi, dan penalaran kuantitatif pada semua mata pelajaran.', content: '<h2>Numerasi Bukan Hanya Matematika</h2><p>Guru IPS dapat mengajak siswa membaca grafik kependudukan; guru IPA menganalisis tabel suhu; guru Bahasa menghitung rata-rata durasi membaca. Numerasi adalah kemampuan menggunakan konsep bilangan dan alat analisis untuk memecahkan masalah sehari-hari.</p>' },
-      { id: 'diferensiasi', title: 'Pembelajaran Berdiferensiasi Praktis', duration: '18 Menit Baca', summary: 'Cara memetakan kesiapan belajar, minat, dan profil belajar siswa untuk menyusun diferensiasi konten, proses, dan produk.', content: '<h2>3 Strategi Diferensiasi di Kelas</h2><ul><li><strong>Diferensiasi Konten:</strong> Menyediakan bacaan, video, atau alat peraga sesuai tingkat kesiapan murid.</li><li><strong>Diferensiasi Proses:</strong> Memberikan pendampingan bertahap (scaffolding) bagi kelompok yang membutuhkan.</li><li><strong>Diferensiasi Produk:</strong> Membebaskan murid memilih bentuk karya akhir (laporan, poster, rekaman suara, atau demonstrasi).</li></ul>' },
-      { id: 'canva-ai', title: 'Canva & Pemanfaatan AI untuk Media Ajar', duration: '15 Menit Baca', summary: 'Panduan cepat membuat infografis, presentasi interaktif, dan kartu edukasi menarik menggunakan akun belajar.id & prompt AI.', content: '<h2>Langkah Cepat Membuat Media Ajar Visual</h2><p>Gunakan fitur <strong>Presentasi AI</strong> atau <strong>Cerita &amp; Video Pembelajaran</strong> di Guru Master AI untuk menyusun kerangka konten dan prompt visual, lalu wujudkan menjadi poster atau slide interaktif menggunakan akun Canva Pendidikan (belajar.id).</p>' }
+      { id: 'deep-learning', title: 'Pembelajaran Mendalam (Deep Learning)', duration: '25 Menit', desc: 'Memahami 3 pilar Mindful, Meaningful, dan Joyful Learning serta 8 Dimensi Profil Lulusan.' },
+      { id: 'koding-ai', title: 'Koding & Kecerdasan Artifisial untuk Guru', duration: '30 Menit', desc: 'Merancang prompt efektif, berpikir komputasional, dan etika penggunaan AI di sekolah.' },
+      { id: 'diferensiasi', title: 'Strategi Pembelajaran Berdiferensiasi Praktis', duration: '20 Menit', desc: 'Teknik diferensiasi konten, proses, dan produk tanpa membebani administrasi guru.' },
+      { id: 'media-interaktif', title: 'Desain Media & Gamifikasi Kelas', duration: '20 Menit', desc: 'Mengoptimalkan presentasi visual, LKPD ramah cetak, dan permainan edukatif di kelas.' }
     ];
 
     function renderMenu10GuruBelajar(ws) {
       ws.innerHTML = `
         <div class="space-y-5">
-          <div class="bg-gradient-to-r from-navy-900 to-amber-700 rounded-2xl p-5 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="bg-gradient-to-r from-amber-500 to-navy-900 rounded-2xl p-5 text-white flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 class="font-display font-extrabold text-xl">💡 Guru Belajar — Ruang Pengembangan Kompetensi</h2>
-              <p class="text-xs text-slate-200 mt-1">Artikel praktis, panduan implementasi kurikulum, dan tutorial teknologi pendidikan siap baca.</p>
+              <h2 class="font-display font-extrabold text-lg">💡 Ruang Guru Belajar — Peningkatan Kompetensi Pendidik</h2>
+              <p class="text-xs text-amber-100">Pelajari modul micro-learning praktis untuk memperkaya strategi mengajar Anda.</p>
             </div>
-            <span class="px-3.5 py-1.5 rounded-full bg-white/15 text-gold-300 text-xs font-bold shrink-0">
-              Selesai Dibaca: ${APP_STATE.learnedModules.length} / ${GURU_BELAJAR_MODULES.length} Modul
-            </span>
+            <span class="px-3.5 py-1.5 rounded-full bg-white/15 text-xs font-extrabold">Progres: ${APP_STATE.learnedModules.length}/${GURU_BELAJAR_MODULES.length} Modul Selesai</span>
           </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            ${GURU_BELAJAR_MODULES.map((m, idx) => {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${GURU_BELAJAR_MODULES.map(m => {
               const done = APP_STATE.learnedModules.includes(m.id);
               return `
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+                <div class="bg-white dark:bg-slate-900 border ${done ? 'border-emerald-400' : 'border-slate-200 dark:border-slate-800'} rounded-2xl p-5 flex flex-col justify-between space-y-4">
                   <div>
-                    <div class="flex items-center justify-between text-[11px] mb-2">
-                      <span class="font-bold text-turquoise-700 dark:text-turquoise-300">⏱️ ${m.duration}</span>
-                      ${done ? `<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">✅ Selesai</span>` : ''}
+                    <div class="flex items-center justify-between text-xs mb-2">
+                      <span class="px-2.5 py-0.5 rounded-full ${done ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold">${done ? '✅ Selesai Dipelajari' : '⏱️ ' + m.duration}</span>
                     </div>
                     <h3 class="font-display font-bold text-base">${escapeHtml(m.title)}</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">${escapeHtml(m.summary)}</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">${escapeHtml(m.desc)}</p>
                   </div>
-                  <button type="button" onclick="openGuruBelajarArticle(${idx})" class="w-full py-2.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold transition">
-                    📖 Baca Materi Lengkap
-                  </button>
+                  <div class="flex gap-2">
+                    <button type="button" onclick="openGuruBelajarModal('${m.id}')" class="flex-1 py-2.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold">📖 Pelajari Materi</button>
+                    <button type="button" onclick="toggleLearnedModule('${m.id}')" class="px-3.5 py-2.5 rounded-xl ${done ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800'} text-xs font-bold">${done ? '✓' : 'Tandai Selesai'}</button>
+                  </div>
                 </div>
               `;
             }).join('')}
@@ -3026,78 +3146,83 @@
       `;
     }
 
-    function openGuruBelajarArticle(idx) {
-      const m = GURU_BELAJAR_MODULES[idx];
+    function toggleLearnedModule(modId) {
+      if (APP_STATE.learnedModules.includes(modId)) {
+        APP_STATE.learnedModules = APP_STATE.learnedModules.filter(x => x !== modId);
+      } else {
+        APP_STATE.learnedModules.push(modId);
+        showToast('Selamat! Modul ditandai selesai.', 'success');
+      }
+      safeStorageSet('gma_learned_modules', JSON.stringify(APP_STATE.learnedModules));
+      renderMenu10GuruBelajar(document.getElementById('main-workspace'));
+    }
+
+    function openGuruBelajarModal(modId) {
+      const m = GURU_BELAJAR_MODULES.find(x => x.id === modId);
       if (!m) return;
       openModal({
         title: m.title,
-        bodyHtml: `<div class="edu-doc">${m.content}</div>`,
+        bodyHtml: `
+          <div class="edu-doc space-y-3 text-sm">
+            <h1>${escapeHtml(m.title)}</h1>
+            <p>${escapeHtml(m.desc)}</p>
+            <h2>Langkah Penerapan Praktis di Kelas</h2>
+            <ol>
+              <li><strong>Mulai dari Pertanyaan Bermakna:</strong> Kaitkan materi pelajaran dengan persoalan nyata di lingkungan murid.</li>
+              <li><strong>Libatkan Murid Secara Aktif:</strong> Beri ruang diskusi, eksplorasi mandiri, dan umpan balik teman sejawat.</li>
+              <li><strong>Refleksi Berkelanjutan:</strong> Tanyakan apa yang dipahami murid dan bagian mana yang masih membingungkan sebelum menutup kelas.</li>
+            </ol>
+          </div>
+        `,
         footerHtml: `
-          <button type="button" onclick="markModuleLearned('${m.id}')" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold">✅ Tandai Selesai Belajar</button>
-          <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold">Tutup</button>
+          <button type="button" onclick="if(!APP_STATE.learnedModules.includes('${m.id}'))toggleLearnedModule('${m.id}');closeModal();" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold">✅ Tandai Selesai &amp; Tutup</button>
         `
       });
     }
 
-    function markModuleLearned(id) {
-      if (!APP_STATE.learnedModules.includes(id)) {
-        APP_STATE.learnedModules.push(id);
-        safeStorageSet('gma_learned_modules', JSON.stringify(APP_STATE.learnedModules));
-      }
-      closeModal();
-      showToast('Selamat! Modul kompetensi ditandai selesai.', 'success');
-      renderMenu10GuruBelajar(document.getElementById('main-workspace'));
-    }
-
     /*************************************************************************
-     * 17. MENU 11: KOMUNIKASI SEKOLAH
+     * 17. MENU 11: KOMUNIKASI SEKOLAH & PERSURATAN
      *************************************************************************/
     function renderMenu11Komunikasi(ws) {
-      const p = APP_STATE.profile;
       ws.innerHTML = `
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
-            <h2 class="font-display font-extrabold text-lg">✉️ Generator Komunikasi &amp; Surat Sekolah</h2>
+            <h2 class="font-display font-extrabold text-lg">✉️ Komunikasi Sekolah &amp; Persuratan</h2>
             <div>
-              <label class="block text-xs font-bold mb-1">Jenis Dokumen / Komunikasi</label>
+              <label class="block text-xs font-bold mb-1">Jenis Surat / Pesan</label>
               <select id="m11-jenis" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
-                <option value="Surat Undangan Rapat Orang Tua / Wali">Surat Undangan</option>
-                <option value="Surat Pemberitahuan Kegiatan Sekolah">Surat Pemberitahuan</option>
-                <option value="Surat Tugas Guru / Pendamping Lomba">Surat Tugas</option>
-                <option value="Surat Izin Kegiatan Siswa">Surat Izin</option>
-                <option value="Pengumuman Resmi Sekolah">Pengumuman</option>
-                <option value="Berita Kegiatan Sekolah">Berita Kegiatan</option>
-                <option value="Laporan Pelaksanaan Kegiatan">Laporan Kegiatan</option>
-                <option value="Teks Sambutan Acara Sekolah">Sambutan</option>
-                <option value="Pesan Informasi Orang Tua (Format WhatsApp)">Pesan untuk Orang Tua</option>
-                <option value="Notulen Rapat Dewan Guru">Notulen Rapat</option>
+                <option value="Surat Undangan Rapat Orang Tua / Wali Murid">Surat Undangan Orang Tua</option>
+                <option value="Surat Edaran Kegiatan Pembelajaran">Surat Edaran Sekolah</option>
+                <option value="Notulen Rapat Dewan Guru">Notulen Rapat Guru</option>
+                <option value="Pesan untuk Orang Tua / Wali Murid (WhatsApp)">Pesan untuk Orang Tua / Wali Murid</option>
               </select>
             </div>
             <div>
               <label class="block text-xs font-bold mb-1">Gaya Bahasa</label>
               <select id="m11-gaya" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
-                <option value="Formal (Tata Naskah Dinas Sekolah)">Formal (Resmi Kedinasan)</option>
-                <option value="Semi-Formal (Hangat & Komunikatif)">Semi-Formal (Komunikatif)</option>
+                <option value="Resmi Kedinasan Sekolah">Resmi Kedinasan</option>
+                <option value="Komunikatif, Santun & Hangat">Komunikatif &amp; Hangat</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs font-bold mb-1">Perihal / Topik Utama</label>
-              <input type="text" id="m11-perihal" value="Pertemuan Wali Murid & Sosialisasi Program Pembelajaran Semester" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+              <label class="block text-xs font-bold mb-1">Perihal / Judul Agenda</label>
+              <input type="text" id="m11-perihal" value="Undangan Pertemuan Wali Murid & Sosialisasi Program Semester" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
             </div>
             <div>
-              <label class="block text-xs font-bold mb-1">Waktu, Tempat &amp; Rincian Penting</label>
-              <textarea id="m11-detail" rows="3" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">Hari Sabtu, 28 November 2026 pukul 08.30 WIB bertempat di Aula ${escapeHtml(p.sekolah)}.</textarea>
+              <label class="block text-xs font-bold mb-1">Rincian Waktu, Tempat &amp; Isi Utama</label>
+              <textarea id="m11-detail" rows="3" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">Hari/Tanggal: Sabtu, 28 November 2026, Pukul 08.30 WIB s.d. selesai, bertempat di Ruang Kelas V. Agenda: Pembahasan program belajar dan dukungan orang tua di rumah.</textarea>
             </div>
             <button type="button" onclick="generateMenu11()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-600 to-navy-900 text-white font-display font-bold text-sm shadow-lg transition">
-              📨 Buat Dokumen Komunikasi
+              📨 Buat Surat / Pesan Sekolah
             </button>
           </div>
+
           <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 min-h-[420px]">
             <div id="m11-output-wrap">
               <div class="h-80 flex flex-col items-center justify-center text-center text-slate-400 p-6">
                 <span class="text-4xl mb-3">✉️</span>
-                <p class="font-semibold text-slate-600 dark:text-slate-300">Surat Resmi, Pengumuman &amp; Pesan Orang Tua</p>
-                <p class="text-xs mt-1 max-w-md">Pilih jenis dokumen dan gaya bahasa formal atau semi-formal yang siap dicetak maupun disalin.</p>
+                <p class="font-semibold text-slate-600 dark:text-slate-300">Generator Surat Dinas, Undangan &amp; Pesan Wali Murid</p>
+                <p class="text-xs mt-1 max-w-md">Lengkapi perihal dan rincian agenda di panel kiri untuk menghasilkan surat siap cetak maupun pesan komunikasi orang tua.</p>
               </div>
             </div>
           </div>
@@ -3347,10 +3472,173 @@
           </div>
           <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-2">
             <button type="button" onclick="openSavedCollectionModal('${it.id}')" class="px-3.5 py-2 rounded-xl bg-navy-900 text-white text-xs font-bold">📖 Buka &amp; Edit</button>
-            <button type="button" onclick="deleteSavedCollection('${it.id}')" class="px-3.5 py-2 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold">🗑️ Hapus</button>
+            <button type="button" onclick="downloadSavedCollectionDoc('${it.id}', 'doc')" class="px-3 py-2 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 text-xs font-bold">📥 Word</button>
+            <button type="button" onclick="downloadSavedCollectionDoc('${it.id}', 'html')" class="px-3 py-2 rounded-xl bg-turquoise-50 dark:bg-turquoise-900/30 text-turquoise-700 dark:text-turquoise-300 text-xs font-bold">🌐 HTML</button>
+            <button type="button" onclick="deleteSavedCollection('${it.id}')" class="px-3 py-2 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold">🗑️</button>
           </div>
         </div>
       `).join('');
+    }
+
+    function downloadSavedCollectionDoc(docId, format = 'doc') {
+      const it = APP_STATE.collections.find(x => x.id === docId);
+      if (!it) {
+        showToast('Dokumen tidak ditemukan.', 'error');
+        return;
+      }
+      const tempDiv = document.createElement('div');
+      tempDiv.id = 'temp-export-holder';
+      tempDiv.style.display = 'none';
+      tempDiv.innerHTML = it.htmlContent;
+      document.body.appendChild(tempDiv);
+      if (format === 'html') downloadHtmlElement('temp-export-holder', it.title);
+      else if (format === 'txt') downloadTxtElement('temp-export-holder', it.title);
+      else if (format === 'pdf') printDocumentElement('temp-export-holder', it.title);
+      else downloadDocxElement('temp-export-holder', it.title);
+      document.body.removeChild(tempDiv);
+    }
+
+    /*************************************************************************
+     * 19B. MENU PUSAT UNDUH FILE & EKSPOR DOKUMEN
+     *************************************************************************/
+    function renderMenuUnduhFile(ws) {
+      const p = APP_STATE.profile;
+      const cols = APP_STATE.collections;
+      const adminTabNames = [
+        { id: 'jurnal', label: 'Jurnal Mengajar Harian' },
+        { id: 'absensi', label: 'Daftar Hadir & Rekap Kehadiran' },
+        { id: 'agenda', label: 'Agenda Kegiatan Kelas' },
+        { id: 'perkembangan', label: 'Catatan Perkembangan Siswa' },
+        { id: 'prota', label: 'Program Tahunan (Prota)' },
+        { id: 'promes', label: 'Program Semester (Promes)' },
+        { id: 'jadwal', label: 'Jadwal Pelajaran Mengajar' },
+        { id: 'refleksi', label: 'Catatan Refleksi Guru' },
+        { id: 'kelas', label: 'Administrasi & Inventaris Kelas' }
+      ];
+
+      ws.innerHTML = `
+        <div class="space-y-6">
+          <div class="bg-gradient-to-r from-navy-950 via-navy-900 to-amber-700 rounded-3xl p-5 sm:p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-white/15 text-gold-300 text-xs font-bold mb-2">Pusat Ekspor &amp; Unduhan</span>
+              <h2 class="font-display font-extrabold text-xl sm:text-2xl">📥 Menu Unduh File GURU MASTER AI</h2>
+              <p class="text-xs sm:text-sm text-slate-200 mt-1">Unduh perangkat ajar, soal, LKPD, rekap administrasi Excel/Word, cadangan data, maupun file aplikasi offline.</p>
+            </div>
+            <button type="button" onclick="downloadAppHtmlFile()" class="px-5 py-3 rounded-2xl bg-gold-500 hover:bg-gold-400 text-navy-950 font-display font-extrabold text-xs sm:text-sm shadow-lg transition shrink-0">
+              ⬇️ Unduh Aplikasi Offline (.html)
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Kartu 1: Unduh Dokumen dari Koleksi Saya -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="font-display font-extrabold text-base flex items-center gap-2"><span>📘</span><span>1. Unduh Dokumen Tersimpan (${cols.length})</span></h3>
+                <button type="button" onclick="navigateTo('koleksi')" class="text-xs font-bold text-turquoise-700 dark:text-turquoise-400 hover:underline">Lihat Koleksi &rarr;</button>
+              </div>
+              ${cols.length === 0
+                ? `<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/70 text-xs text-slate-500 space-y-2">
+                     <p>Belum ada dokumen di <strong>Koleksi Saya</strong>. Buat dokumen di menu Perangkat Pembelajaran, Bank Soal, atau LKPD lalu klik <strong>Simpan</strong>, atau langsung gunakan tombol <strong>📥 Unduh File ▾</strong> di hasil generator.</p>
+                   </div>`
+                : `<div class="space-y-3">
+                     <div>
+                       <label class="block text-xs font-bold mb-1">Pilih Dokumen Tersimpan</label>
+                       <select id="unduh-col-select" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                         ${cols.map(c => `<option value="${c.id}">[${escapeHtml(c.category)}] ${escapeHtml(c.title)}</option>`).join('')}
+                       </select>
+                     </div>
+                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                       <button type="button" onclick="downloadSelectedCollection('doc')" class="py-2.5 px-3 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold">📘 Word (.doc)</button>
+                       <button type="button" onclick="downloadSelectedCollection('html')" class="py-2.5 px-3 rounded-xl bg-turquoise-600 hover:bg-turquoise-500 text-white text-xs font-bold">🌐 HTML (.html)</button>
+                       <button type="button" onclick="downloadSelectedCollection('txt')" class="py-2.5 px-3 rounded-xl bg-slate-200 dark:bg-slate-800 text-xs font-bold">📝 Teks (.txt)</button>
+                       <button type="button" onclick="downloadSelectedCollection('pdf')" class="py-2.5 px-3 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 text-xs font-bold">🖨️ PDF A4</button>
+                     </div>
+                   </div>`
+              }
+            </div>
+
+            <!-- Kartu 2: Unduh Rekap Administrasi Guru -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="font-display font-extrabold text-base flex items-center gap-2"><span>📊</span><span>2. Unduh Rekap Administrasi Guru</span></h3>
+                <button type="button" onclick="navigateTo('menu-8')" class="text-xs font-bold text-turquoise-700 dark:text-turquoise-400 hover:underline">Isi Data &rarr;</button>
+              </div>
+              <div>
+                <label class="block text-xs font-bold mb-1">Pilih Jenis Buku Administrasi</label>
+                <select id="unduh-admin-select" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                  ${adminTabNames.map(t => `<option value="${t.id}">${t.label} (${(APP_STATE.adminData[t.id] || []).length} baris)</option>`).join('')}
+                </select>
+              </div>
+              <div class="grid grid-cols-2 gap-2.5">
+                <button type="button" onclick="downloadCsvAdmin(document.getElementById('unduh-admin-select').value)" class="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs">📊 Unduh Excel (.csv)</button>
+                <button type="button" onclick="downloadAdminAsWordFromCenter()" class="py-2.5 px-4 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold shadow-xs">📘 Unduh Word (.doc)</button>
+              </div>
+            </div>
+
+            <!-- Kartu 3: Unduh File Aplikasi Offline -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+              <div class="space-y-2">
+                <h3 class="font-display font-extrabold text-base flex items-center gap-2"><span>💻</span><span>3. Unduh Aplikasi untuk Penggunaan Offline</span></h3>
+                <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Simpan seluruh aplikasi <strong>GURU MASTER AI</strong> sebagai satu file mandiri (<code>Guru_Master_AI_Offline.html</code>) di laptop atau ponsel Anda agar tetap dapat digunakan kapan saja tanpa internet.
+                </p>
+              </div>
+              <button type="button" onclick="downloadAppHtmlFile()" class="w-full py-3 rounded-xl bg-gradient-to-r from-turquoise-600 to-navy-900 text-white text-xs font-extrabold shadow">
+                ⬇️ Unduh File Aplikasi (Guru_Master_AI_Offline.html)
+              </button>
+            </div>
+
+            <!-- Kartu 4: Cadangan & Pemulihan Data (JSON) -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+              <div class="space-y-2">
+                <h3 class="font-display font-extrabold text-base flex items-center gap-2"><span>🛡️</span><span>4. Cadangan &amp; Pulihkan Seluruh Data Guru</span></h3>
+                <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Cadangkan profil guru (<strong>${escapeHtml(p.nama)}</strong>), seluruh dokumen tersimpan, dan catatan administrasi ke berkas <code>.json</code> atau pulihkan di perangkat lain.
+                </p>
+              </div>
+              <div class="grid grid-cols-2 gap-2.5">
+                <button type="button" onclick="downloadFullBackupJson()" class="py-3 px-3 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 text-xs font-extrabold">
+                  💾 Unduh Backup (.json)
+                </button>
+                <label class="cursor-pointer py-3 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-center text-xs font-bold flex items-center justify-center">
+                  <span>📂 Pulihkan (.json)</span>
+                  <input type="file" accept=".json,application/json" class="hidden" onchange="restoreFullBackupJson(event)" />
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function downloadSelectedCollection(format) {
+      const sel = document.getElementById('unduh-col-select');
+      if (!sel || !sel.value) return;
+      downloadSavedCollectionDoc(sel.value, format);
+    }
+
+    function downloadAdminAsWordFromCenter() {
+      const tab = document.getElementById('unduh-admin-select')?.value || 'jurnal';
+      const rows = APP_STATE.adminData[tab] || [];
+      if (rows.length === 0) {
+        showToast('Belum ada data pada tab administrasi tersebut.', 'error');
+        return;
+      }
+      const keys = Object.keys(rows[0]).filter(k => k !== 'id');
+      const tableHtml = `
+        <h1>REKAP ADMINISTRASI GURU — ${escapeHtml(tab.toUpperCase())}</h1>
+        <table>
+          <thead><tr>${keys.map(k => `<th>${escapeHtml(k.toUpperCase())}</th>`).join('')}</tr></thead>
+          <tbody>${rows.map(r => `<tr>${keys.map(k => `<td>${escapeHtml(r[k] ?? '')}</td>`).join('')}</tr>`).join('')}</tbody>
+        </table>
+      `;
+      const tempDiv = document.createElement('div');
+      tempDiv.id = 'temp-admin-word-holder';
+      tempDiv.style.display = 'none';
+      tempDiv.innerHTML = tableHtml;
+      document.body.appendChild(tempDiv);
+      downloadDocxElement('temp-admin-word-holder', `Administrasi_${tab}`);
+      document.body.removeChild(tempDiv);
     }
 
     function openSavedCollectionModal(docId) {
